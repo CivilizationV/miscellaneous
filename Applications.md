@@ -12,3 +12,6 @@
 
 5. 控制 Android 设备
 [scrcpy](https://github.com/Genymobile/scrcpy.git)
+
+6. 文本编辑器
+[vim](https://www.vim.org/)
