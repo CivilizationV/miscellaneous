@@ -15,3 +15,6 @@
 
 6. 文本编辑器
 [vim](https://www.vim.org/)
+
+7. 录屏软件
+[obs-studio](https://github.com/obsproject/obs-studio.git)
