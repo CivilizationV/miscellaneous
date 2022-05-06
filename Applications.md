@@ -18,3 +18,6 @@
 
 7. 录屏软件
 [obs-studio](https://github.com/obsproject/obs-studio.git)
+
+8. 下载软件
+[aria2](https://github.com/aria2/aria2.git)
