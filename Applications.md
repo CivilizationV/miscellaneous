@@ -52,3 +52,13 @@
 
 2. 下载软件
 [aria2](https://github.com/aria2/aria2.git)
+
+
+# 其他
+
+
+1. 剪切板，Mac only
+[Clipy](https://github.com/Clipy/Clipy.git)
+
+2. 终端配置
+[ohmyzsh](https://github.com/ohmyzsh/ohmyzsh.git)
