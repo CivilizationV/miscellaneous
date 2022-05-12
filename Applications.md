@@ -43,6 +43,12 @@
 14. 文本编辑器
 [vim](https://github.com/vim/vim.git)
 
+15. openssl
+[openssl](https://github.com/openssl/openssl.git)
+
+16. 粘贴板(可能没用)
+[xclip](https://github.com/astrand/xclip.git)
+
 
 # C++ 工具
 
@@ -57,8 +63,11 @@
 # 其他
 
 
-1. 剪切板，Mac only
+1. 剪切板，macOS only
 [Clipy](https://github.com/Clipy/Clipy.git)
 
 2. 终端配置
 [ohmyzsh](https://github.com/ohmyzsh/ohmyzsh.git)
+
+3. 终端，macOS only
+[iTerm2](https://github.com/gnachman/iTerm2.git)
