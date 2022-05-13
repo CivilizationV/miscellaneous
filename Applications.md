@@ -71,3 +71,7 @@
 
 3. 终端，macOS only
 [iTerm2](https://github.com/gnachman/iTerm2.git)
+
+4. tldr
+[tldr](https://github.com/tldr-pages/tldr.git)
+> export TLDR_ALLOW_INSECURE=1
