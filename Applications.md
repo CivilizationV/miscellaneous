@@ -75,3 +75,4 @@
 4. tldr
 [tldr](https://github.com/tldr-pages/tldr.git)
 > export TLDR_ALLOW_INSECURE=1
+> export TLDR_LANGUAGE="en"
