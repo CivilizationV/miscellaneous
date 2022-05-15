@@ -59,6 +59,9 @@
 2. 下载软件
 [aria2](https://github.com/aria2/aria2.git)
 
+3. 密码管理
+[keepassxc](https://github.com/keepassxreboot/keepassxc.git)
+
 
 # 其他
 
