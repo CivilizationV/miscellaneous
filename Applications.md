@@ -7,6 +7,17 @@
 2. 控制 Android 设备
 [scrcpy](https://github.com/Genymobile/scrcpy.git)
 
+> 1. Connection
+
+>> Get your device IP address, in Settings → About phone → Status, then run: scrcpy --tcpip=192.168.1.1
+
+> 2. File Drop
+
+>> To push a file to /sdcard/Download/ on the device, drag & drop a (non-APK) file to the scrcpy window.
+
+>> To install an APK, drag & drop an APK file (ending with .apk) to the scrcpy window.
+
+
 3. 监控软件
 [netdata](https://github.com/netdata/netdata.git)
 
@@ -77,5 +88,7 @@
 
 4. tldr
 [tldr](https://github.com/tldr-pages/tldr.git)
+
 > export TLDR_ALLOW_INSECURE=1
+
 > export TLDR_LANGUAGE="en"
