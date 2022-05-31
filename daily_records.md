@@ -32,11 +32,13 @@
 | Computer Architecture: A Quantitative Approach    |       |          |            |                  |             |
 
 
-# Daily Record
+# Daily Records
 
 ## 2022年 5月
 
 | date  | Computer Networks | Database System Concepts |
 | ----  | :---------------: | :----------------------: |
 | 05-28 | 218               | -                        |
-| 05-29 | -                 | -                        |
+| 05-29 | 225               | -                        |
+| 05-30 | 232               | -                        |
+| 05-31 | 000               | -                        |
