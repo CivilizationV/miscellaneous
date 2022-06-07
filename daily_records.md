@@ -1,8 +1,8 @@
 # Progress
 
-| Title looooooooooooooooooooooooooooooooooooooooog | Pages | Status   | Started_at | Finished_at      | Description |
+| Title                                             | Pages | Status   | Started_at | Finished_at      | Description |
 | ------------------------------------------------- | ----- | ------   | ---------- | ---------        | ----------- |
-| **Thinking in Java**                                  | 1033  | Finished |            |                  |             |
+| **Thinking in Java**                              | 1033  | Finished |            |                  |             |
 | Spring in Action, Fourth Edition                  | 569   | Finished |            |                  |             |
 | Maven实战                                         |       | Finished |            |                  |             |
 | Redis in Action                                   | 271   | Finished |            |                  |             |
@@ -13,17 +13,17 @@
 | Java Performance: The Definitive Guide            | 396   | Finished |            | 2020-01-13       |             |
 | The Linux Command Line, 2nd Edition               | 458   | Finished |            | 2020-04-12       |             |
 | Refactoring                                       | 404   | Finished |            | 2020-09-06 15:40 |             |
-| **Operating System Concepts**                         | 1041  | Finished |            | 2020-09-24 10:00 |             |
+| **Operating System Concepts**                     | 1041  | Finished |            | 2020-09-24 10:00 |             |
 | Effective Java (3rd Edition)                      | 366   | Finished |            | 2020-10-30 23:00 |             |
 | Spring源码深度解析                                | 435   | Finished |            | 2021-01-05 13:10 |             |
 | Practical Vim: Edit Text at the Speed of Thought  | 306   | Finished |            | 2021-12-08 13:10 |             |
-| **Designing Data-Intensive Applications**             | 544   | Finished |            | 2022-04-09 21:00 |             |
+| **Designing Data-Intensive Applications**         | 544   | Finished |            | 2022-04-09 21:00 |             |
 | Modern Vim                                        | 163   | Finished |            | 2022-05-14       |             |
 | tmux 2: Productive Mouse-Free Development         | 112   | Finished |            | 2022-05-14       |             |
-| **Introduction to Algorithms, 3rd Edition**           | 1140  | Reading  |            |                  |             |
-| **Computer Networks (5th Edition)**                   | 876   | Reading  |            |                  |             |
-| **Database System Concepts, 7th Edition**             | 1298  | Reading  |            |                  |             |
-| **The Linux Programming Interface**                   | 1436  | Reading  |            |                  |             |
+| **Introduction to Algorithms, 3rd Edition**       | 1140  | Reading  |            |                  |             |
+| **Computer Networks (5th Edition)**               | 876   | Reading  |            |                  |             |
+| **Database System Concepts, 7th Edition**         | 1298  | Reading  |            |                  |             |
+| **The Linux Programming Interface**               | 1436  | Reading  |            |                  |             |
 | Computer Organization and Design MIPS Edition     |       |          |            |                  |             |
 | Compilers: Principles, Techniques, and Tools      |       |          |            |                  |             |
 | Computer Systems: A Programmer's Perspective      |       |          |            |                  |             |
@@ -34,6 +34,16 @@
 
 # Daily Records
 
+# 2022年 6月 
+
+| date  | Computer Networks(876) | Database System Concepts(1284) | Kafka(280) | awk(186) |
+| ----  | :---------------:      | :----------------------:       | :---:      | :------: |
+| 06-03 | 257                    | 37                             |            |          |
+| 06-05 | 265                    | 37                             |            |          |
+| 06-06 | 267                    | 37                             | 165        |          |
+| 06-07 | 271                    | 37                             | 167        | 67       |
+
+
 ## 2022年 5月
 
 | date  | Computer Networks | Database System Concepts |
@@ -41,4 +51,6 @@
 | 05-28 | 218               | -                        |
 | 05-29 | 225               | -                        |
 | 05-30 | 232               | -                        |
-| 05-31 | 000               | -                        |
+| 05-31 | 236               | -                        |
+
+
