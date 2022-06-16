@@ -215,4 +215,39 @@ END { print sum }
 ```
 
 ## THE AWK LANGUAGE
+
+```
+{ print \ 
+		$1,  # country name
+		$2,  # area in thousands of square miles
+		$3 } # population in millions
+```
+
+### Patterns
+
+```
+1. BEGIN { statements }
+2. END { statements }
+3. expression { statements }
+4. /regular expression/ { statements }
+5. compound pattern { statements }
+6. pattern1 , pattern2 { statements }
+```
++ BEGIN and END do not combine with other patterns. A range pattern cannot be part of any other pattern. BEGIN and END are the only patterns that require an action.
+
+```
+# print countries with column headers and totals
+BEGIN	{	FS ="\t"	# make tab the field separator 
+			printf("%10s %6s %5s %s\n\n", "COUNTRY", "AREA", "POP", "CONTINENT")
+		}
+		{	printf("%10s %6d %5d %s\n", $1, $2, $3, $4) 
+			area = area + $2
+			pop = pop + $3
+		}
+END		{ printf("\n%10s %6d %5d\n", "TOTAL", area, pop) }
+```
+
+### Actions
+
+
 ## DATA PROCESSING
