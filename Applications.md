@@ -60,6 +60,9 @@
 16. 粘贴板(可能没用)
 - [xclip](https://github.com/astrand/xclip.git)
 
+17. ctags
+- [ctags](https://github.com/universal-ctags/ctags.git)
+
 
 # C++ 工具
 
