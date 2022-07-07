@@ -20,6 +20,7 @@
 | **Designing Data-Intensive Applications**         | 544   | Finished |            | 2022-04-09 21:00 |             |
 | Modern Vim                                        | 163   | Finished |            | 2022-05-14       |             |
 | tmux 2: Productive Mouse-Free Development         | 112   | Finished |            | 2022-05-14       |             |
+| Learning the vi and Vim Editors                   | 411   | Finished |            | 2022-07-04       |             |
 | **Introduction to Algorithms, 3rd Edition**       | 1140  | Reading  |            |                  |             |
 | **Computer Networks (5th Edition)**               | 876   | Reading  |            |                  |             |
 | **Database System Concepts, 7th Edition**         | 1298  | Reading  |            |                  |             |
@@ -34,7 +35,14 @@
 
 # Daily Records
 
-# 2022年 6月 
+## 2022年 7月
+
+| date  | Computer Networks(876) | Database System Concepts(1284) | Kafka(280) | awk(186) | ZooKeeper(214) | Linux(418) |
+| ----  | :---------------:      | :----------------------:       | :---:      | :------: | :------------: | :--------: |
+| 07-07 | 329                    | 37                             | 181        | 93       | 21             | 70         |
+
+
+## 2022年 6月 
 
 | date  | Computer Networks(876) | Database System Concepts(1284) | Kafka(280) | awk(186) | ZooKeeper(214) | Linux(418) | vim(411) |
 | ----  | :---------------:      | :----------------------:       | :---:      | :------: | :------------: | :--------: | :------: |
@@ -56,7 +64,9 @@
 | 06-23 | 307                    | 37                             | 181        | 93       | 18             | 17         |          |
 | 06-24 | 311                    | 37                             | 181        | 93       | 21             | 21         |          |
 | 06-27 | 322                    | 37                             | 181        | 93       | 21             | 32         | 132      |
-| 06-27 | 322                    | 37                             | 181        | 93       | 21             | 32         | 161      |
+| 06-28 | 322                    | 37                             | 181        | 93       | 21             | 37         | 161      |
+| 06-29 | 324                    | 37                             | 181        | 93       | 21             | 47         | 213      |
+| 06-30 | 324                    | 37                             | 181        | 93       | 21             | 48         | 231      |
 
 
 ## 2022年 5月
