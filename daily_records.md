@@ -25,12 +25,12 @@
 | **Computer Networks (5th Edition)**                | 876   | Reading  |            |                  |             |
 | **Database System Concepts, 7th Edition**          | 1298  | Reading  |            |                  |             |
 | **The Linux Programming Interface**                | 1436  | Reading  |            |                  |             |
-| **Computer Organization and Design MIPS Edition**  |       |          |            |                  |             |
+| **Computer Organization and Design**               | 602   |          |            |                  |             |
 | **Compilers: Principles, Techniques, and Tools**   |       |          |            |                  |             |
 | Computer Systems: A Programmer's Perspective       |       |          |            |                  |             |
 | Discrete Mathematics and Its Applications          |       |          |            |                  |             |
 | Structure and Interpretation of Computer Programs  |       |          |            |                  |             |
-| **Computer Architecture: A Quantitative Approach** |       |          |            |                  |             |
+| **Computer Architecture: A Quantitative Approach** | 617   |          |            |                  |             |
 
 
 # Daily Records
@@ -39,7 +39,8 @@
 
 | date  | Computer Networks(876) | Database System Concepts(1284) | Kafka(280) | awk(186) | ZooKeeper(214) | Linux(418) | Computer Organization and Design(1104) |
 | ----  | :---------------:      | :----------------------:       | :---:      | :------: | :------------: | :--------: | :------------------------------------: |
-| 08-01 | 379                    | 37                             | 181        | 93       | 21             | 70         | 51                                     |
+| 08-01 | 379                    | 37                             | 181        | 93       | 21             | 70         | 68                                     |
+| 08-02 | 382                    | 37                             | 181        | 93       | 21             | 70         | 68                                     |
 
 
 ## 2022年 7月
