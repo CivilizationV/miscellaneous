@@ -9,6 +9,8 @@
 
 > 1. Connection
 
+>> 设置 -> 开发人员选项 -> USB调试
+
 >> Get your device IP address, in Settings → About phone → Status, then run: scrcpy --tcpip=192.168.1.1
 
 > 2. File Drop
