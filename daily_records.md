@@ -21,8 +21,8 @@
 | Modern Vim                                         | 163   | Finished |            | 2022-05-14       |             |
 | tmux 2: Productive Mouse-Free Development          | 112   | Finished |            | 2022-05-14       |             |
 | Learning the vi and Vim Editors                    | 411   | Finished |            | 2022-07-04       |             |
+| **Computer Networks (5th Edition)**                | 876   | finished  |            |2023-01-01 13:00                  |             |
 | **Introduction to Algorithms, 3rd Edition**        | 1140  | Reading  |            |                  |             |
-| **Computer Networks (5th Edition)**                | 876   | Reading  |            |                  |             |
 | **Database System Concepts, 7th Edition**          | 1298  | Reading  |            |                  |             |
 | **The Linux Programming Interface**                | 1436  | Reading  |            |                  |             |
 | **Computer Organization and Design**               | 602   |          |            |                  |             |
@@ -35,11 +35,20 @@
 
 # Daily Records
 
+# 2023年 1月
+| date  | Computer Networks(876) | Database System Concepts(1284) | Kafka(280) | awk(186) | ZooKeeper(214) | Linux(418) | Computer Organization and Design(602)  |
+| ----  | :---------------:      | :----------------------:       | :---:      | :------: | :------------: | :--------: | :------------------------------------: |
+| 01-01 | 871                    | 41                             | 181        | 93       | 21             | 72         | 403                                    |
+| 01-05 | 871                    | 41                             | 181        | 93       | 21             | 72         | 405                                    |
+| 01-06 | 871                    | 41                             | 181        | 93       | 21             | 72         | 407                                    |
+
 # 2022年12月 
 | date  | Computer Networks(876) | Database System Concepts(1284) | Kafka(280) | awk(186) | ZooKeeper(214) | Linux(418) | Computer Organization and Design(602)  |
 | ----  | :---------------:      | :----------------------:       | :---:      | :------: | :------------: | :--------: | :------------------------------------: |
 | 12-01 | 795                    | 41                             | 181        | 93       | 21             | 72         | 403                                    |
-| 12-02 | 798                    | 41                             | 181        | 93       | 21             | 72         | 403                                    |
+| 12-02 | 801                    | 41                             | 181        | 93       | 21             | 72         | 403                                    |
+| 12-23 | 841                    | 41                             | 181        | 93       | 21             | 72         | 403                                    |
+| 12-26 | 847                    | 41                             | 181        | 93       | 21             | 72         | 403                                    |
 
 # 2022年11月 
 | date  | Computer Networks(876) | Database System Concepts(1284) | Kafka(280) | awk(186) | ZooKeeper(214) | Linux(418) | Computer Organization and Design(602)  |
