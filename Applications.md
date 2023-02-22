@@ -78,6 +78,19 @@
 3. 密码管理
 - [keepassxc](https://github.com/keepassxreboot/keepassxc.git)
 
+4. 截屏工具
+- [flameshot](https://github.com/flameshot-org/flameshot.git)
+
+
+# python 工具
+
+
+1. 爬虫
+- [scrapy](https://github.com/scrapy/scrapy.git)
+
+2. HTTP proxy
+- [mitmproxy](https://github.com/mitmproxy/mitmproxy.git)
+
 
 # 其他
 
