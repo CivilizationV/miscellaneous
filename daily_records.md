@@ -35,12 +35,19 @@
 
 # Daily Records
 
+# 2023年 3月
+| date  | Database System Concepts(1284) | Kafka(280) | awk(186) | ZooKeeper(214) | Linux(418) | Computer Organization and Design(602)  |
+| ----  | :----------------------:       | :---:      | :------: | :------------: | :--------: | :------------------------------------: |
+| 03-02 | 69                             | 181        | 93       | 21             | 72         | 432                                    |
+| 03-10 | 74                             | 181        | 93       | 52             | 72         | 435                                    |
+
 # 2023年 2月
 | date  | Database System Concepts(1284) | Kafka(280) | awk(186) | ZooKeeper(214) | Linux(418) | Computer Organization and Design(602)  |
 | ----  | :----------------------:       | :---:      | :------: | :------------: | :--------: | :------------------------------------: |
 | 02-10 | 41                             | 181        | 93       | 21             | 72         | 429                                    |
 | 02-21 | 43                             | 181        | 93       | 21             | 72         | 432                                    |
-| 02-21 | 49                             | 181        | 93       | 21             | 72         | 432                                    |
+| 02-22 | 49                             | 181        | 93       | 21             | 72         | 432                                    |
+| 02-23 | 52                             | 181        | 93       | 21             | 72         | 432                                    |
 
 # 2023年 1月
 | date  | Computer Networks(876) | Database System Concepts(1284) | Kafka(280) | awk(186) | ZooKeeper(214) | Linux(418) | Computer Organization and Design(602)  |
