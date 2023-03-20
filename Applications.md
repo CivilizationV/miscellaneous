@@ -111,8 +111,18 @@
 
 > export TLDR_LANGUAGE="en"
 
-5. 翻译(awk)
+5. 文件格式转换
+- [Pandoc](https://github.com/jgm/pandoc.git)
+
+6. markdown editor
+- [marktext](https://github.com/marktext/marktext.git)
+
+7. PDF reader
+- [koodo-reader](https://github.com/troyeguo/koodo-reader.git)
+
+8. database client
+- [dbeaver](https://github.com/dbeaver/dbeaver.git)
+
+9. 翻译(awk)
 - [translate-shell](https://github.com/soimort/translate-shell.git)
 
-6. 文件格式转换
-- [Pandoc](https://github.com/jgm/pandoc.git)
