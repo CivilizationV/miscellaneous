@@ -81,6 +81,9 @@
 4. 截屏工具
 - [flameshot](https://github.com/flameshot-org/flameshot.git)
 
+5. Clipboard
+- [CopyQ](https://github.com/hluk/CopyQ.git)
+
 
 # python 工具
 
