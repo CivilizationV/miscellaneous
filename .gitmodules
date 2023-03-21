@@ -1,0 +1,3 @@
+[submodule "zookeeper"]
+	path = zookeeper
+	url = https://github.com/fpj/zookeeper-book-example.git
