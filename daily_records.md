@@ -1,39 +1,86 @@
 # Progress
 
-| Title                                              | Pages | Status   | Started_at | Finished_at      | Description |
-| -------------------------------------------------  | ----- | ------   | ---------- | ---------        | ----------- |
-| **Thinking in Java**                               | 1033  | Finished |            |                  |             |
-| Spring in Action, Fourth Edition                   | 569   | Finished |            |                  |             |
-| Maven实战                                          |       | Finished |            |                  |             |
-| Redis in Action                                    | 271   | Finished |            |                  |             |
-| 深入理解Java虚拟机                                 |       | Finished |            |                  |             |
-| Java Concurrency in Practice                       | 351   | Finished |            |                  |             |
-| Design Patterns                                    | 396   | Finished |            |                  |             |
-| Docker Deep Dive: Zero to Docker in a single book  | 400   | Finished |            | 2019-11-05       |             |
-| Java Performance: The Definitive Guide             | 396   | Finished |            | 2020-01-13       |             |
-| The Linux Command Line, 2nd Edition                | 458   | Finished |            | 2020-04-12       |             |
-| Refactoring                                        | 404   | Finished |            | 2020-09-06 15:40 |             |
-| **Operating System Concepts**                      | 1041  | Finished |            | 2020-09-24 10:00 |             |
-| Effective Java (3rd Edition)                       | 366   | Finished |            | 2020-10-30 23:00 |             |
-| Spring源码深度解析                                 | 435   | Finished |            | 2021-01-05 13:10 |             |
-| Practical Vim: Edit Text at the Speed of Thought   | 306   | Finished |            | 2021-12-08 13:10 |             |
-| **Designing Data-Intensive Applications**          | 544   | Finished |            | 2022-04-09 21:00 |             |
-| Modern Vim                                         | 163   | Finished |            | 2022-05-14       |             |
-| tmux 2: Productive Mouse-Free Development          | 112   | Finished |            | 2022-05-14       |             |
-| Learning the vi and Vim Editors                    | 411   | Finished |            | 2022-07-04       |             |
-| **Computer Networks (5th Edition)**                | 876   | finished  |            |2023-01-01 13:00                  |             |
-| **Introduction to Algorithms, 3rd Edition**        | 1140  | Reading  |            |                  |             |
-| **Database System Concepts, 7th Edition**          | 1298  | Reading  |            |                  |             |
-| **The Linux Programming Interface**                | 1436  | Reading  |            |                  |             |
-| **Computer Organization and Design**               | 602   |          |            |                  |             |
-| **Compilers: Principles, Techniques, and Tools**   |       |          |            |                  |             |
-| **Computer Systems: A Programmer's Perspective**       |       |          |            |                  |             |
-| Discrete Mathematics and Its Applications          |       |          |            |                  |             |
-| Structure and Interpretation of Computer Programs  |       |          |            |                  |             |
-| **Computer Architecture: A Quantitative Approach** | 617   |          |            |                  |             |
+| Title                                             | Pages | Status   | Started_at | Finished_at      | Description |
+| ------------------------------------------------- | ----- | ------   | ---------- | ---------        | ----------- |
+| Thinking in Java                                  | 1033  | Finished |            |                  |             |
+| Spring in Action, Fourth Edition                  | 569   | Finished |            |                  |             |
+| Maven实战                                         |       | Finished |            |                  |             |
+| Redis in Action                                   | 271   | Finished |            |                  |             |
+| 深入理解Java虚拟机                                |       | Finished |            |                  |             |
+| Java Concurrency in Practice                      | 351   | Finished |            |                  |             |
+| Design Patterns                                   | 396   | Finished |            |                  |             |
+| Docker Deep Dive: Zero to Docker in a single book | 400   | Finished |            | 2019-11-05       |             |
+| Java Performance: The Definitive Guide            | 396   | Finished |            | 2020-01-13       |             |
+| The Linux Command Line, 2nd Edition               | 458   | Finished |            | 2020-04-12       |             |
+| Refactoring                                       | 404   | Finished |            | 2020-09-06 15:40 |             |
+| Operating System Concepts                         | 1041  | Finished |            | 2020-09-24 10:00 |             |
+| Effective Java (3rd Edition)                      | 366   | Finished |            | 2020-10-30 23:00 |             |
+| Spring源码深度解析                                | 435   | Finished |            | 2021-01-05 13:10 |             |
+| Practical Vim: Edit Text at the Speed of Thought  | 306   | Finished |            | 2021-12-08 13:10 |             |
+| Designing Data-Intensive Applications             | 544   | Finished |            | 2022-04-09 21:00 |             |
+| Modern Vim                                        | 163   | Finished |            | 2022-05-14       |             |
+| tmux 2: Productive Mouse-Free Development         | 112   | Finished |            | 2022-05-14       |             |
+| Learning the vi and Vim Editors                   | 411   | Finished |            | 2022-07-04       |             |
+| Computer Networks (5th Edition)                   | 876   | Finished |            | 2023-01-01 13:00 |             |
+| Computer Organization and Design                  | 602   | Finished |            | 2023-05-23 10:00 |             |
+| Introduction to Algorithms, 3rd Edition           | 1140  | Reading  |            |                  |             |
+| Database System Concepts, 7th Edition             | 1298  | Reading  |            |                  |             |
+| The Linux Programming Interface                   | 1436  | Reading  |            |                  |             |
+| Compilers: Principles, Techniques, and Tools      |       |          |            |                  |             |
+| Computer Systems: A Programmer's Perspective      |       |          |            |                  |             |
+| Discrete Mathematics and Its Applications         |       |          |            |                  |             |
+| Structure and Interpretation of Computer Programs |       |          |            |                  |             |
+| Computer Architecture: A Quantitative Approach    | 617   |          |            |                  |             |
 
 
 # Daily Records
+
+# 2023年 6月
+| date  | Database System Concepts(1284) | Kafka(280) | awk(186) | ZooKeeper(214) | Linux(418) | Computer Architecture(617) | JavaScript(665) |
+| ----  | :----------------------:       | :---:      | :------: | :------------: | :--------: | :------------------------: | :-------------: |
+| 06-01 | 146                            | 181        | 93       | 77             | 72         | 1                          | 61              |
+| 06-05 | 155                            | 181        | 93       | 77             | 72         | 1                          | 61              |
+| 06-07 | 165                            | 181        | 93       | 77             | 72         | 1                          | 61              |
+| 06-08 | 183                            | 181        | 93       | 77             | 72         | 1                          | 64              |
+| 06-09 | 188                            | 181        | 93       | 77             | 72         | 1                          | 64              |
+| 06-14 | 206                            | 181        | 93       | 77             | 72         | 1                          | 64              |
+| 06-15 | 219                            | 181        | 93       | 77             | 72         | 1                          | 65              |
+| 06-19 | 226                            | 181        | 93       | 77             | 72         | 1                          | 65              |
+| 06-21 | 241                            | 181        | 93       | 77             | 72         | 1                          | 65              |
+| 06-27 | 245                            | 181        | 93       | 77             | 72         | 1                          | 65              |
+
+# 2023年 5月
+| date  | Database System Concepts(1284) | Kafka(280) | awk(186) | ZooKeeper(214) | Linux(418) | Computer Organization and Design(602)  | JavaScript(665) |
+| ----  | :----------------------:       | :---:      | :------: | :------------: | :--------: | :------------------------------------: | :-------------: |
+| 05-04 | 79                             | 181        | 93       | 77             | 72         | 561                                    | 61              |
+| 05-05 | 79                             | 181        | 93       | 77             | 72         | 572                                    | 61              |
+| 05-08 | 79                             | 181        | 93       | 77             | 72         | 576                                    | 61              |
+| 05-23 | 82                             | 181        | 93       | 77             | 72         | 602                                    | 61              |
+| 05-24 | 86                             | 181        | 93       | 77             | 72         | 602                                    | 61              |
+| 05-25 | 91                             | 181        | 93       | 77             | 72         | 602                                    | 61              |
+| 05-29 | 112                            | 181        | 93       | 77             | 72         | 602                                    | 61              |
+| 05-30 | 131                            | 181        | 93       | 77             | 72         | 602                                    | 61              |
+| 05-31 | 137                            | 181        | 93       | 77             | 72         | 602                                    | 61              |
+
+# 2023年 4月
+| date  | Database System Concepts(1284) | Kafka(280) | awk(186) | ZooKeeper(214) | Linux(418) | Computer Organization and Design(602)  | JavaScript(665) |
+| ----  | :----------------------:       | :---:      | :------: | :------------: | :--------: | :------------------------------------: | :-------------: |
+| 04-03 | 79                             | 181        | 93       | 77             | 72         | 464                                    | 45              |
+| 04-10 | 79                             | 181        | 93       | 77             | 72         | 464                                    | 49              |
+| 04-11 | 79                             | 181        | 93       | 77             | 72         | 465                                    | 53              |
+| 04-12 | 79                             | 181        | 93       | 77             | 72         | 474                                    | 53              |
+| 04-13 | 79                             | 181        | 93       | 77             | 72         | 477                                    | 53              |
+| 04-14 | 79                             | 181        | 93       | 77             | 72         | 481                                    | 53              |
+| 04-17 | 79                             | 181        | 93       | 77             | 72         | 522                                    | 53              |
+| 04-18 | 79                             | 181        | 93       | 77             | 72         | 527                                    | 53              |
+| 04-19 | 79                             | 181        | 93       | 77             | 72         | 528                                    | 53              |
+| 04-21 | 79                             | 181        | 93       | 77             | 72         | 537                                    | 53              |
+| 04-23 | 79                             | 181        | 93       | 77             | 72         | 539                                    | 53              |
+| 04-24 | 79                             | 181        | 93       | 77             | 72         | 543                                    | 53              |
+| 04-25 | 79                             | 181        | 93       | 77             | 72         | 549                                    | 53              |
+| 04-26 | 79                             | 181        | 93       | 77             | 72         | 554                                    | 54              |
+| 04-27 | 79                             | 181        | 93       | 77             | 72         | 554                                    | 55              |
+| 04-28 | 79                             | 181        | 93       | 77             | 72         | 554                                    | 61              |
 
 # 2023年 3月
 | date  | Database System Concepts(1284) | Kafka(280) | awk(186) | ZooKeeper(214) | Linux(418) | Computer Organization and Design(602)  | JavaScript(665) |
@@ -41,6 +88,12 @@
 | 03-02 | 69                             | 181        | 93       | 21             | 72         | 432                                    |                 |
 | 03-10 | 74                             | 181        | 93       | 52             | 72         | 435                                    |                 |
 | 03-20 | 74                             | 181        | 93       | 69             | 72         | 442                                    | 5               |
+| 03-21 | 74                             | 181        | 93       | 75             | 72         | 444                                    | 5               |
+| 03-22 | 79                             | 181        | 93       | 77             | 72         | 448                                    | 15              |
+| 03-23 | 79                             | 181        | 93       | 77             | 72         | 448                                    | 25              |
+| 03-25 | 79                             | 181        | 93       | 77             | 72         | 449                                    | 30              |
+| 03-27 | 79                             | 181        | 93       | 77             | 72         | 451                                    | 30              |
+| 03-28 | 79                             | 181        | 93       | 77             | 72         | 456                                    | 35              |
 
 # 2023年 2月
 | date  | Database System Concepts(1284) | Kafka(280) | awk(186) | ZooKeeper(214) | Linux(418) | Computer Organization and Design(602)  |
