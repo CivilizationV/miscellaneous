@@ -5,14 +5,14 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class SkipList<K> {
 
-//    *//**
-//     * Special value used to identify base-level header
-//     *//*
+    /**
+     * Special value used to identify base-level header
+     */
     private static final Object BASE_HEADER = new Object();
 
-//    *//**
-//     * The topmost head index of the skiplist.
-//     *//*
+    /**
+     * The topmost head index of the skiplist.
+     */
     private transient volatile HeadIndex<K> head;
 
     final Comparator<? super K> comparator;
@@ -27,23 +27,23 @@ public class SkipList<K> {
         return true;
     }
 
-//    *//* ---------------- Nodes -------------- *//*
-//
-//    *//**
-//     * Nodes hold keys , and are singly linked in sorted
-//     * order, possibly with some intervening marker nodes. The list is
-//     * headed by a dummy node accessible as head.node. The value field
-//     * is declared only as Object because it takes special non-V
-//     * values for marker and header nodes.
-//     *//*
+    /* ---------------- Nodes -------------- */
+
+    /**
+     * Nodes hold keys , and are singly linked in sorted
+     * order, possibly with some intervening marker nodes. The list is
+     * headed by a dummy node accessible as head.node. The value field
+     * is declared only as Object because it takes special non-V
+     * values for marker and header nodes.
+     */
     static final class Node<K> {
         final K key;
         volatile boolean deleted;
         volatile Node<K> next;
 
-//        *//**
-//         * Creates a new regular node.
-//         *//*
+        /**
+         * Creates a new regular node.
+         */
         Node(K key, Node<K> next) {
             this.key = key;
             this.next = next;
@@ -76,54 +76,54 @@ public class SkipList<K> {
         final Index<K> down;
         volatile Index<K> right;
 
-//        *//**
-//         * Creates index node with given values.
-//         *//*
+        /**
+         * Creates index node with given values.
+         */
         Index(Node<K> node, Index<K> down, Index<K> right) {
             this.node = node;
             this.down = down;
             this.right = right;
         }
 
-//        *//**
-//         * compareAndSet right field
-//         *//*
+        /**
+         * compareAndSet right field
+         */
         final boolean updateRight(Index<K> val) {
             this.right = val;
             return true;
         }
 
-//        *//**
-//         * Tries to CAS newSucc as successor.  To minimize races with
-//         * unlink that may lose this index node, if the node being
-//         * indexed is known to be deleted, it doesn't try to link in.
-//         * @param succ the expected current successor
-//         * @param newSucc the new successor
-//         * @return true if successful
-//         *//*
+        /**
+         * Tries to CAS newSucc as successor.  To minimize races with
+         * unlink that may lose this index node, if the node being
+         * indexed is known to be deleted, it doesn't try to link in.
+         * @param succ the expected current successor
+         * @param newSucc the new successor
+         * @return true if successful
+         */
         final void link(Index<K> succ, Index<K> newSucc) {
             newSucc.right = succ;
             updateRight(newSucc);
         }
 
-//        *//**
-//         * Tries to CAS right field to skip over apparent successor
-//         * succ.  Fails (forcing a retraversal by caller) if this node
-//         * is known to be deleted.
-//         * @param succ the expected current successor
-//         * @return true if successful
-//         *//*
+        /**
+         * Tries to CAS right field to skip over apparent successor
+         * succ.  Fails (forcing a retraversal by caller) if this node
+         * is known to be deleted.
+         * @param succ the expected current successor
+         * @return true if successful
+         */
         final boolean unlink(Index<K> succ) {
             return updateRight(succ.right);
         }
 
     }
 
-//    *//* ---------------- Head nodes -------------- *//*
-//
-//    *//**
-//     * Nodes heading each level keep track of their level.
-//     *//*
+    /* ---------------- Head nodes -------------- */
+
+    /**
+     * Nodes heading each level keep track of their level.
+     */
     static final class HeadIndex<K> extends Index<K> {
         final int level;
         HeadIndex(Node<K> node, Index<K> down, Index<K> right, int level) {
@@ -132,27 +132,27 @@ public class SkipList<K> {
         }
     }
 
-//    *//* ---------------- Comparison utilities -------------- *//*
+    /* ---------------- Comparison utilities -------------- */
 
-//    *//**
-//     * Compares using comparator or natural ordering if null.
-//     * Called only by methods that have performed required type checks.
-//     *//*
+    /**
+     * Compares using comparator or natural ordering if null.
+     * Called only by methods that have performed required type checks.
+     */
     @SuppressWarnings({"unchecked", "rawtypes"})
     static final int cpr(Comparator c, Object x, Object y) {
         return (c != null) ? c.compare(x, y) : ((Comparable)x).compareTo(y);
     }
 
-//    *//* ---------------- Traversal -------------- *//*
+    /* ---------------- Traversal -------------- */
 
-//    *//**
-//     * Returns a base-level node with key strictly less than given key,
-//     * or the base-level header if there is no such node.  Also
-//     * unlinks indexes to deleted nodes found along the way.  Callers
-//     * rely on this side-effect of clearing indices to deleted nodes.
-//     * @param key the key
-//     * @return a predecessor of key
-//     *//*
+    /**
+     * Returns a base-level node with key strictly less than given key,
+     * or the base-level header if there is no such node.  Also
+     * unlinks indexes to deleted nodes found along the way.  Callers
+     * rely on this side-effect of clearing indices to deleted nodes.
+     * @param key the key
+     * @return a predecessor of key
+     */
     private Node<K> findPredecessor(Object key, Comparator<? super K> cmp) {
         if (key == null)
             throw new NullPointerException(); // don't postpone errors
@@ -178,50 +178,50 @@ public class SkipList<K> {
         }
     }
 
-    //    *//**
-//     * Returns node holding key or null if no such, clearing out any
-//     * deleted nodes seen along the way.  Repeatedly traverses at
-//     * base-level looking for key starting at predecessor returned
-//     * from findPredecessor, processing base-level deletions as
-//     * encountered. Some callers rely on this side-effect of clearing
-//     * deleted nodes.
-//     *
-//     * Restarts occur, at traversal step centered on node n, if:
-//     *
-//     *   (1) After reading n's next field, n is no longer assumed
-//     *       predecessor b's current successor, which means that
-//     *       we don't have a consistent 3-node snapshot and so cannot
-//     *       unlink any subsequent deleted nodes encountered.
-//     *
-//     *   (2) n's value field is null, indicating n is deleted, in
-//     *       which case we help out an ongoing structural deletion
-//     *       before retrying.  Even though there are cases where such
-//     *       unlinking doesn't require restart, they aren't sorted out
-//     *       here because doing so would not usually outweigh cost of
-//     *       restarting.
-//     *
-//     *   (3) n is a marker or n's predecessor's value field is null,
-//     *       indicating (among other possibilities) that
-//     *       findPredecessor returned a deleted node. We can't unlink
-//     *       the node because we don't know its predecessor, so rely
-//     *       on another call to findPredecessor to notice and return
-//     *       some earlier predecessor, which it will do. This check is
-//     *       only strictly needed at beginning of loop, (and the
-//     *       b.value check isn't strictly needed at all) but is done
-//     *       each iteration to help avoid contention with other
-//     *       threads by callers that will fail to be able to change
-//     *       links, and so will retry anyway.
-//     *
-//     * The traversal loops in doPut, doRemove, and findNear all
-//     * include the same three kinds of checks. And specialized
-//     * versions appear in findFirst, and findLast and their
-//     * variants. They can't easily share code because each uses the
-//     * reads of fields held in locals occurring in the orders they
-//     * were performed.
-//     *
-//     * @param key the key
-//     * @return node holding key, or null if no such
-//     *//*
+    /**
+     * Returns node holding key or null if no such, clearing out any
+     * deleted nodes seen along the way.  Repeatedly traverses at
+     * base-level looking for key starting at predecessor returned
+     * from findPredecessor, processing base-level deletions as
+     * encountered. Some callers rely on this side-effect of clearing
+     * deleted nodes.
+     *
+     * Restarts occur, at traversal step centered on node n, if:
+     *
+     *   (1) After reading n's next field, n is no longer assumed
+     *       predecessor b's current successor, which means that
+     *       we don't have a consistent 3-node snapshot and so cannot
+     *       unlink any subsequent deleted nodes encountered.
+     *
+     *   (2) n's value field is null, indicating n is deleted, in
+     *       which case we help out an ongoing structural deletion
+     *       before retrying.  Even though there are cases where such
+     *       unlinking doesn't require restart, they aren't sorted out
+     *       here because doing so would not usually outweigh cost of
+     *       restarting.
+     *
+     *   (3) n is a marker or n's predecessor's value field is null,
+     *       indicating (among other possibilities) that
+     *       findPredecessor returned a deleted node. We can't unlink
+     *       the node because we don't know its predecessor, so rely
+     *       on another call to findPredecessor to notice and return
+     *       some earlier predecessor, which it will do. This check is
+     *       only strictly needed at beginning of loop, (and the
+     *       b.value check isn't strictly needed at all) but is done
+     *       each iteration to help avoid contention with other
+     *       threads by callers that will fail to be able to change
+     *       links, and so will retry anyway.
+     *
+     * The traversal loops in doPut, doRemove, and findNear all
+     * include the same three kinds of checks. And specialized
+     * versions appear in findFirst, and findLast and their
+     * variants. They can't easily share code because each uses the
+     * reads of fields held in locals occurring in the orders they
+     * were performed.
+     *
+     * @param key the key
+     * @return node holding key, or null if no such
+     */
 
     private Node<K> findNode(Object key) {
         if (key == null)
@@ -248,14 +248,12 @@ public class SkipList<K> {
     }
 
 
-    //    *//**
-//     * Main insertion method.  Adds element if not present, or
-//     * replaces value if present and onlyIfAbsent is false.
-//     * @param key the key
-//     * @param value the value that must be associated with key
-//     * @param onlyIfAbsent if should not insert if already present
-//     * @return the old value, or null if newly inserted
-//     *//*
+    /**
+     * Main insertion method.  Adds element if not present, or
+     * replaces value if present and onlyIfAbsent is false.
+     * @param key the key
+     * @return the old value, or null if newly inserted
+     */
 
     public boolean insert(K key) {
         Node<K> z;             // added node
@@ -348,25 +346,24 @@ public class SkipList<K> {
         return true;
     }
 
-//    *//**
-//     * Main deletion method. Locates node, nulls value, appends a
-//     * deletion marker, unlinks predecessor, removes associated index
-//     * nodes, and possibly reduces head index level.
-//     *
-//     * Index nodes are cleared out simply by calling findPredecessor.
-//     * which unlinks indexes to deleted nodes found along path to key,
-//     * which will include the indexes to this node.  This is done
-//     * unconditionally. We can't check beforehand whether there are
-//     * index nodes because it might be the case that some or all
-//     * indexes hadn't been inserted yet for this node during initial
-//     * search for it, and we'd like to ensure lack of garbage
-//     * retention, so must call to be sure.
-//     *
-//     * @param key the key
-//     * @param value if non-null, the value that must be
-//     * associated with key
-//     * @return the node, or null if not found
-//     *//*
+    /**
+     * Main deletion method. Locates node, nulls value, appends a
+     * deletion marker, unlinks predecessor, removes associated index
+     * nodes, and possibly reduces head index level.
+     *
+     * Index nodes are cleared out simply by calling findPredecessor.
+     * which unlinks indexes to deleted nodes found along path to key,
+     * which will include the indexes to this node.  This is done
+     * unconditionally. We can't check beforehand whether there are
+     * index nodes because it might be the case that some or all
+     * indexes hadn't been inserted yet for this node during initial
+     * search for it, and we'd like to ensure lack of garbage
+     * retention, so must call to be sure.
+     *
+     * @param key the key
+     * associated with key
+     * @return the node, or null if not found
+     */
     public final boolean delete(Object key) {
         if (key == null)
             throw new NullPointerException();
@@ -399,26 +396,26 @@ public class SkipList<K> {
         return false;
     }
 
-//    *//**
-//     * Possibly reduce head level if it has no nodes.  This method can
-//     * (rarely) make mistakes, in which case levels can disappear even
-//     * though they are about to contain index nodes. This impacts
-//     * performance, not correctness.  To minimize mistakes as well as
-//     * to reduce hysteresis, the level is reduced by one only if the
-//     * topmost three levels look empty. Also, if the removed level
-//     * looks non-empty after CAS, we try to change it back quick
-//     * before anyone notices our mistake! (This trick works pretty
-//     * well because this method will practically never make mistakes
-//     * unless current thread stalls immediately before first CAS, in
-//     * which case it is very unlikely to stall again immediately
-//     * afterwards, so will recover.)
-//     *
-//     * We put up with all this rather than just let levels grow
-//     * because otherwise, even a small map that has undergone a large
-//     * number of insertions and removals will have a lot of levels,
-//     * slowing down access more than would an occasional unwanted
-//     * reduction.
-//     *//*
+    /**
+     * Possibly reduce head level if it has no nodes.  This method can
+     * (rarely) make mistakes, in which case levels can disappear even
+     * though they are about to contain index nodes. This impacts
+     * performance, not correctness.  To minimize mistakes as well as
+     * to reduce hysteresis, the level is reduced by one only if the
+     * topmost three levels look empty. Also, if the removed level
+     * looks non-empty after CAS, we try to change it back quick
+     * before anyone notices our mistake! (This trick works pretty
+     * well because this method will practically never make mistakes
+     * unless current thread stalls immediately before first CAS, in
+     * which case it is very unlikely to stall again immediately
+     * afterwards, so will recover.)
+     *
+     * We put up with all this rather than just let levels grow
+     * because otherwise, even a small map that has undergone a large
+     * number of insertions and removals will have a lot of levels,
+     * slowing down access more than would an occasional unwanted
+     * reduction.
+     */
     private void tryReduceLevel() {
         HeadIndex<K> h = head;
         HeadIndex<K> d;
