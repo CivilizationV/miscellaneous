@@ -6,11 +6,6 @@ import java.util.concurrent.ThreadLocalRandom;
 public class SkipList<K> {
 
     /**
-     * Special value used to identify base-level header
-     */
-    private static final Object BASE_HEADER = new Object();
-
-    /**
      * The topmost head index of the skiplist.
      */
     private transient volatile HeadIndex<K> head;
@@ -31,10 +26,8 @@ public class SkipList<K> {
 
     /**
      * Nodes hold keys , and are singly linked in sorted
-     * order, possibly with some intervening marker nodes. The list is
-     * headed by a dummy node accessible as head.node. The value field
-     * is declared only as Object because it takes special non-V
-     * values for marker and header nodes.
+     * order. The list is
+     * headed by a dummy node accessible as head.node.
      */
     static final class Node<K> {
         final K key;
@@ -49,14 +42,12 @@ public class SkipList<K> {
             this.next = next;
         }
 
-        boolean setDeleted() {
+        void setDeleted() {
             this.deleted = true;
-            return true;
         }
 
-        boolean updateNext(Node<K> val) {
+        void updateNext(Node<K> val) {
             this.next = val;
-            return true;
         }
 
 
@@ -86,20 +77,16 @@ public class SkipList<K> {
         }
 
         /**
-         * compareAndSet right field
+         * Set right field
          */
-        final boolean updateRight(Index<K> val) {
+        final void updateRight(Index<K> val) {
             this.right = val;
-            return true;
         }
 
         /**
-         * Tries to CAS newSucc as successor.  To minimize races with
-         * unlink that may lose this index node, if the node being
-         * indexed is known to be deleted, it doesn't try to link in.
+         * Set newSucc as successor.
          * @param succ the expected current successor
          * @param newSucc the new successor
-         * @return true if successful
          */
         final void link(Index<K> succ, Index<K> newSucc) {
             newSucc.right = succ;
@@ -107,14 +94,12 @@ public class SkipList<K> {
         }
 
         /**
-         * Tries to CAS right field to skip over apparent successor
-         * succ.  Fails (forcing a retraversal by caller) if this node
-         * is known to be deleted.
-         * @param succ the expected current successor
-         * @return true if successful
+         * Tries to set right field to skip over apparent successor
+         * succ.
+         * @param succ the current successor
          */
-        final boolean unlink(Index<K> succ) {
-            return updateRight(succ.right);
+        final void unlink(Index<K> succ) {
+            updateRight(succ.right);
         }
 
     }
@@ -188,34 +173,15 @@ public class SkipList<K> {
      *
      * Restarts occur, at traversal step centered on node n, if:
      *
-     *   (1) After reading n's next field, n is no longer assumed
-     *       predecessor b's current successor, which means that
-     *       we don't have a consistent 3-node snapshot and so cannot
-     *       unlink any subsequent deleted nodes encountered.
-     *
-     *   (2) n's value field is null, indicating n is deleted, in
+     *       n's value field is null, indicating n is deleted, in
      *       which case we help out an ongoing structural deletion
      *       before retrying.  Even though there are cases where such
      *       unlinking doesn't require restart, they aren't sorted out
      *       here because doing so would not usually outweigh cost of
      *       restarting.
      *
-     *   (3) n is a marker or n's predecessor's value field is null,
-     *       indicating (among other possibilities) that
-     *       findPredecessor returned a deleted node. We can't unlink
-     *       the node because we don't know its predecessor, so rely
-     *       on another call to findPredecessor to notice and return
-     *       some earlier predecessor, which it will do. This check is
-     *       only strictly needed at beginning of loop, (and the
-     *       b.value check isn't strictly needed at all) but is done
-     *       each iteration to help avoid contention with other
-     *       threads by callers that will fail to be able to change
-     *       links, and so will retry anyway.
-     *
-     * The traversal loops in doPut, doRemove, and findNear all
-     * include the same three kinds of checks. And specialized
-     * versions appear in findFirst, and findLast and their
-     * variants. They can't easily share code because each uses the
+     * The traversal loops in doPut, doRemove all
+     * include the same three kinds of checks. They can't easily share code because each uses the
      * reads of fields held in locals occurring in the orders they
      * were performed.
      *
@@ -249,38 +215,32 @@ public class SkipList<K> {
 
 
     /**
-     * Main insertion method.  Adds element if not present, or
-     * replaces value if present and onlyIfAbsent is false.
+     * Main insertion method.  Adds element if not present.
      * @param key the key
-     * @return the old value, or null if newly inserted
      */
 
-    public boolean insert(K key) {
+    public void insert(K key) {
         Node<K> z;             // added node
         if (key == null)
             throw new NullPointerException();
         Comparator<? super K> cmp = comparator;
         for (Node<K> b = findPredecessor(key, cmp), n = b.next; ; ) {
             if (n != null) {
-                int c;
                 Node<K> f = n.next;
                 if (n.deleted) {   // n is deleted
                     b.updateNext(f);
                     n = f;
                     continue;
                 }
-                if ((c = cpr(cmp, key, n.key)) > 0) {
+                if (cpr(cmp, key, n.key) > 0) {
                     b = n;
                     n = f;
                     continue;
                 }
-                if (c == 0) {
-                    return false;
-                }
-                // else c < 0; fall through
+                // else c <= 0; fall through
             }
 
-            z = new Node<K>(key, n);
+            z = new Node<>(key, n);
             b.updateNext(z);
             break;
         }
@@ -295,16 +255,16 @@ public class SkipList<K> {
             HeadIndex<K> h = head;
             if (level <= (max = h.level)) {
                 for (int i = 1; i <= level; ++i)
-                    idx = new Index<K>(z, idx, null);
+                    idx = new Index<>(z, idx, null);
             } else { // try to grow by one level
                 level = max + 1; // hold in array and later pick the one to use
                 @SuppressWarnings("unchecked") Index<K>[] idxs =
                         (Index<K>[]) new Index<?>[level + 1];
                 for (int i = 1; i <= level; ++i)
-                    idxs[i] = idx = new Index<K>(z, idx, null);
+                    idxs[i] = idx = new Index<>(z, idx, null);
                 int oldLevel = h.level;
                 Node<K> oldbase = h.node;
-                HeadIndex<K> newh = new HeadIndex<K>(oldbase, h, idxs[level], level); // top level
+                HeadIndex<K> newh = new HeadIndex<>(oldbase, h, idxs[level], level); // top level
                 updateHead(newh);
                 h = newh;
                 idx = idxs[level = oldLevel];
@@ -343,12 +303,10 @@ public class SkipList<K> {
                 r = q.right;
             }
         }
-        return true;
     }
 
     /**
-     * Main deletion method. Locates node, nulls value, appends a
-     * deletion marker, unlinks predecessor, removes associated index
+     * Main deletion method. Locates node, unlinks predecessor, removes associated index
      * nodes, and possibly reduces head index level.
      *
      * Index nodes are cleared out simply by calling findPredecessor.
@@ -361,8 +319,7 @@ public class SkipList<K> {
      * retention, so must call to be sure.
      *
      * @param key the key
-     * associated with key
-     * @return the node, or null if not found
+     * @return true, or false if not found
      */
     public final boolean delete(Object key) {
         if (key == null)
@@ -390,7 +347,6 @@ public class SkipList<K> {
             findPredecessor(key, cmp);      // clean index
             if (head.right == null)
                 tryReduceLevel();
-
             return true;
         }
         return false;
@@ -402,13 +358,7 @@ public class SkipList<K> {
      * though they are about to contain index nodes. This impacts
      * performance, not correctness.  To minimize mistakes as well as
      * to reduce hysteresis, the level is reduced by one only if the
-     * topmost three levels look empty. Also, if the removed level
-     * looks non-empty after CAS, we try to change it back quick
-     * before anyone notices our mistake! (This trick works pretty
-     * well because this method will practically never make mistakes
-     * unless current thread stalls immediately before first CAS, in
-     * which case it is very unlikely to stall again immediately
-     * afterwards, so will recover.)
+     * topmost three levels look empty.
      *
      * We put up with all this rather than just let levels grow
      * because otherwise, even a small map that has undergone a large
@@ -425,10 +375,8 @@ public class SkipList<K> {
             (e = (HeadIndex<K>)d.down) != null &&
             e.right == null &&
             d.right == null &&
-            h.right == null &&
-            updateHead(d) && // try to set
-            h.right != null) // recheck
-            updateHead(h);   // try to backout
+            h.right == null)
+            updateHead(d);
     }
 
     public SkipList() {
