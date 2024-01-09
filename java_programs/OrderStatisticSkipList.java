@@ -3,12 +3,17 @@ package com.spicdt.party.admin.biz.publish.service;
 import java.util.Comparator;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class SkipList<K> {
+public class OrderStatisticSkipList<K> {
 
     /**
      * The topmost head index of the skiplist.
      */
     private transient volatile HeadIndex<K> head;
+
+    /**
+     * The size of the List (the number of elements it contains).
+     */
+    private int size;
 
     final Comparator<? super K> comparator;
 
@@ -66,6 +71,7 @@ public class SkipList<K> {
         final Node<K> node;
         final Index<K> down;
         volatile Index<K> right;
+        private int interval;
 
         /**
          * Creates index node with given values.
@@ -91,6 +97,16 @@ public class SkipList<K> {
         final void link(Index<K> succ, Index<K> newSucc) {
             newSucc.right = succ;
             updateRight(newSucc);
+            int i = 0;
+            Node<K> node = this.node;
+            while (node != newSucc.node) {
+                node = node.next;
+                i++;
+            }
+            newSucc.interval = i;
+            if (succ != null) {
+                succ.interval = succ.interval - i + 1;
+            }
         }
 
         /**
@@ -100,6 +116,9 @@ public class SkipList<K> {
          */
         final void unlink(Index<K> succ) {
             updateRight(succ.right);
+            if (succ.right != null) {
+                succ.right.interval = succ.right.interval - 1;
+            }
         }
 
     }
@@ -134,7 +153,7 @@ public class SkipList<K> {
      * Returns a base-level node with key strictly less than given key,
      * or the base-level header if there is no such node.  Also
      * unlinks indexes to deleted nodes found along the way.  Callers
-     * rely on this side-effect of clearing indices to deleted nodes.
+     * rely on this side effect of clearing indices to deleted nodes.
      * @param key the key
      * @return a predecessor of key
      */
@@ -168,7 +187,7 @@ public class SkipList<K> {
      * deleted nodes seen along the way.  Repeatedly traverses at
      * base-level looking for key starting at predecessor returned
      * from findPredecessor, processing base-level deletions as
-     * encountered. Some callers rely on this side-effect of clearing
+     * encountered. Some callers rely on this side effect of clearing
      * deleted nodes.
      *
      * Restarts occur, at traversal step centered on node n, if:
@@ -213,6 +232,96 @@ public class SkipList<K> {
         return null;
     }
 
+    public int rank(Object key) {
+        if (key == null)
+            throw new NullPointerException(); // don't postpone errors
+        Comparator<? super K> cmp = comparator;
+
+        Node<K> b;
+        int rank = 0;
+        for (Index<K> q = head, r = q.right, d; ; ) {
+            if (r != null) {
+                Node<K> n = r.node;
+                K k = n.key;
+                if (n.deleted) {
+                    q.unlink(r);
+                    r = q.right;         // reread r
+                    continue;
+                }
+                if (cpr(cmp, key, k) > 0) {
+                    rank = rank + r.interval;
+                    q = r;
+                    r = r.right;
+                    continue;
+                }
+            }
+            if ((d = q.down) == null) {
+                b = q.node;
+                break;
+            }
+            q = d;
+            r = d.right;
+        }
+        for (Node<K> n = b.next; ; ) {
+            int c;
+            if (n == null)
+                break;
+            Node<K> f = n.next;
+            if (n.deleted) {    // n is deleted
+                b.updateNext(f);
+                n = f;
+                continue;
+            }
+            if ((c = cpr(cmp, key, n.key)) == 0)
+                return ++rank;
+            if (c < 0)
+                break;
+            b = n;
+            n = f;
+            rank++;
+        }
+        return -1;
+    }
+
+    public K select(int rank) {
+        if (rank <= 0)
+            throw new IllegalArgumentException(); // don't postpone errors
+        int i = rank;
+        for (Index<K> q = head, r = q.right, d; ; ) {
+            if (r != null) {
+                Node<K> n = r.node;
+                K k = n.key;
+                if (n.deleted) {
+                    q.unlink(r);
+                    r = q.right;         // reread r
+                    continue;
+                }
+                int interval = r.interval;
+                if (interval < i) {
+                    i = i - interval;
+                    q = r;
+                    r = r.right;
+                    continue;
+                } else if (interval == i) {
+                    return k;
+                }
+            }
+            if ((d = q.down) == null) {
+                Node<K> node = q.node;
+                while (i > 0) {
+                    i--;
+                    if (node != null) {
+                        node = node.next;
+                    } else {
+                        return null;
+                    }
+                }
+                return node.key;
+            }
+            q = d;
+            r = d.right;
+        }
+    }
 
     /**
      * Main insertion method.  Adds element if not present.
@@ -241,6 +350,7 @@ public class SkipList<K> {
 
             z = new Node<>(key, n);
             b.updateNext(z);
+            size++;
             break;
         }
 
@@ -343,6 +453,7 @@ public class SkipList<K> {
             }
             n.setDeleted();
             b.updateNext(f);
+            --size;
             findPredecessor(key, cmp);      // clean index
             if (head.right == null)
                 tryReduceLevel();
@@ -378,12 +489,21 @@ public class SkipList<K> {
             updateHead(d);
     }
 
-    public SkipList() {
+    /**
+     * Returns the number of elements in this list.
+     *
+     * @return the number of elements in this list
+     */
+    public int size() {
+        return size;
+    }
+
+    public OrderStatisticSkipList() {
         this.comparator = null;
         initialize();
     }
 
-    public SkipList(Comparator<? super K> comparator) {
+    public OrderStatisticSkipList(Comparator<? super K> comparator) {
         this.comparator = comparator;
         initialize();
     }
