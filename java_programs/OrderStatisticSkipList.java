@@ -232,6 +232,11 @@ public class OrderStatisticSkipList<K> {
         return null;
     }
 
+    /**
+     * Determining the rank of an element
+     * @param key
+     * @return
+     */
     public int rank(Object key) {
         if (key == null)
             throw new NullPointerException(); // don't postpone errors
@@ -283,6 +288,11 @@ public class OrderStatisticSkipList<K> {
         return -1;
     }
 
+    /**
+     * Retrieving the element with a given rank
+     * @param rank
+     * @return
+     */
     public K select(int rank) {
         if (rank <= 0)
             throw new IllegalArgumentException(); // don't postpone errors
