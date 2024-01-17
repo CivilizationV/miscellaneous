@@ -3,21 +3,21 @@ package com.spicdt.party.admin.biz.publish.service;
 import java.util.Comparator;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class SkipList<K> {
+public class SkipList<V> {
 
     /**
      * The topmost head index of the skiplist.
      */
-    private transient volatile HeadIndex<K> head;
+    private transient volatile HeadIndex<V> head;
 
-    final Comparator<? super K> comparator;
+    final Comparator<? super V> comparator;
 
     private void initialize() {
-        head = new HeadIndex<K>(new Node<K>(null, null),
+        head = new HeadIndex<V>(new Node<V>(null, null),
                                   null, null, 1);
     }
 
-    private boolean updateHead(HeadIndex<K> val) {
+    private boolean updateHead(HeadIndex<V> val) {
         this.head = val;
         return true;
     }
@@ -29,15 +29,15 @@ public class SkipList<K> {
      * order. The list is
      * headed by a dummy node accessible as head.node.
      */
-    static final class Node<K> {
-        final K key;
+    static final class Node<V> {
+        final V key;
         volatile boolean deleted;
-        volatile Node<K> next;
+        volatile Node<V> next;
 
         /**
          * Creates a new regular node.
          */
-        Node(K key, Node<K> next) {
+        Node(V key, Node<V> next) {
             this.key = key;
             this.next = next;
         }
@@ -46,7 +46,7 @@ public class SkipList<K> {
             this.deleted = true;
         }
 
-        void updateNext(Node<K> val) {
+        void updateNext(Node<V> val) {
             this.next = val;
         }
 
@@ -62,15 +62,15 @@ public class SkipList<K> {
      * ways, that can't nicely be captured by placing field in a
      * shared abstract class.
      */
-    static class Index<K> {
-        final Node<K> node;
-        final Index<K> down;
-        volatile Index<K> right;
+    static class Index<V> {
+        final Node<V> node;
+        final Index<V> down;
+        volatile Index<V> right;
 
         /**
          * Creates index node with given values.
          */
-        Index(Node<K> node, Index<K> down, Index<K> right) {
+        Index(Node<V> node, Index<V> down, Index<V> right) {
             this.node = node;
             this.down = down;
             this.right = right;
@@ -79,7 +79,7 @@ public class SkipList<K> {
         /**
          * Set right field
          */
-        final void updateRight(Index<K> val) {
+        final void updateRight(Index<V> val) {
             this.right = val;
         }
 
@@ -88,7 +88,7 @@ public class SkipList<K> {
          * @param succ the expected current successor
          * @param newSucc the new successor
          */
-        final void link(Index<K> succ, Index<K> newSucc) {
+        final void link(Index<V> succ, Index<V> newSucc) {
             newSucc.right = succ;
             updateRight(newSucc);
         }
@@ -98,7 +98,7 @@ public class SkipList<K> {
          * succ.
          * @param succ the current successor
          */
-        final void unlink(Index<K> succ) {
+        final void unlink(Index<V> succ) {
             updateRight(succ.right);
         }
 
@@ -109,9 +109,9 @@ public class SkipList<K> {
     /**
      * Nodes heading each level keep track of their level.
      */
-    static final class HeadIndex<K> extends Index<K> {
+    static final class HeadIndex<V> extends Index<V> {
         final int level;
-        HeadIndex(Node<K> node, Index<K> down, Index<K> right, int level) {
+        HeadIndex(Node<V> node, Index<V> down, Index<V> right, int level) {
             super(node, down, right);
             this.level = level;
         }
@@ -138,13 +138,13 @@ public class SkipList<K> {
      * @param key the key
      * @return a predecessor of key
      */
-    private Node<K> findPredecessor(Object key, Comparator<? super K> cmp) {
+    private Node<V> findPredecessor(Object key, Comparator<? super V> cmp) {
         if (key == null)
             throw new NullPointerException(); // don't postpone errors
-        for (Index<K> q = head, r = q.right, d; ; ) {
+        for (Index<V> q = head, r = q.right, d; ; ) {
             if (r != null) {
-                Node<K> n = r.node;
-                K k = n.key;
+                Node<V> n = r.node;
+                V k = n.key;
                 if (n.deleted) {
                     q.unlink(r);
                     r = q.right;         // reread r
@@ -189,15 +189,15 @@ public class SkipList<K> {
      * @return node holding key, or null if no such
      */
 
-    private Node<K> findNode(Object key) {
+    private Node<V> findNode(Object key) {
         if (key == null)
             throw new NullPointerException(); // don't postpone errors
-        Comparator<? super K> cmp = comparator;
-        for (Node<K> b = findPredecessor(key, cmp), n = b.next; ; ) {
+        Comparator<? super V> cmp = comparator;
+        for (Node<V> b = findPredecessor(key, cmp), n = b.next; ; ) {
             int c;
             if (n == null)
                 break;
-            Node<K> f = n.next;
+            Node<V> f = n.next;
             if (n.deleted) {    // n is deleted
                 b.updateNext(f);
                 n = f;
@@ -218,14 +218,14 @@ public class SkipList<K> {
      * Main insertion method.  Adds element if not present.
      * @param key the key
      */
-    public void insert(K key) {
-        Node<K> z;             // added node
+    public void insert(V key) {
+        Node<V> z;             // added node
         if (key == null)
             throw new NullPointerException();
-        Comparator<? super K> cmp = comparator;
-        for (Node<K> b = findPredecessor(key, cmp), n = b.next; ; ) {
+        Comparator<? super V> cmp = comparator;
+        for (Node<V> b = findPredecessor(key, cmp), n = b.next; ; ) {
             if (n != null) {
-                Node<K> f = n.next;
+                Node<V> f = n.next;
                 if (n.deleted) {   // n is deleted
                     b.updateNext(f);
                     n = f;
@@ -250,20 +250,20 @@ public class SkipList<K> {
             int level = 1, max;
             while (((rnd >>>= 1) & 1) != 0)
                 ++level;
-            Index<K> idx = null;
-            HeadIndex<K> h = head;
+            Index<V> idx = null;
+            HeadIndex<V> h = head;
             if (level <= (max = h.level)) {
                 for (int i = 1; i <= level; ++i)
                     idx = new Index<>(z, idx, null);
             } else { // try to grow by one level
                 level = max + 1; // hold in array and later pick the one to use
-                @SuppressWarnings("unchecked") Index<K>[] idxs =
-                        (Index<K>[]) new Index<?>[level + 1];
+                @SuppressWarnings("unchecked") Index<V>[] idxs =
+                        (Index<V>[]) new Index<?>[level + 1];
                 for (int i = 1; i <= level; ++i)
                     idxs[i] = idx = new Index<>(z, idx, null);
                 int oldLevel = h.level;
-                Node<K> oldbase = h.node;
-                HeadIndex<K> newh = new HeadIndex<>(oldbase, h, idxs[level], level); // top level
+                Node<V> oldbase = h.node;
+                HeadIndex<V> newh = new HeadIndex<>(oldbase, h, idxs[level], level); // top level
                 updateHead(newh);
                 h = newh;
                 idx = idxs[level = oldLevel];
@@ -271,11 +271,11 @@ public class SkipList<K> {
             // find insertion points and splice in
             int insertionLevel = level;
             int j = h.level;
-            for (Index<K> q = h, r = q.right, t = idx; ; ) {
+            for (Index<V> q = h, r = q.right, t = idx; ; ) {
                 if (t == null)
                     break;
                 if (r != null) {
-                    Node<K> n = r.node;
+                    Node<V> n = r.node;
                     // compare before deletion check avoids needing recheck
                     int c = cpr(cmp, key, n.key);
                     if (n.deleted) {
@@ -323,12 +323,12 @@ public class SkipList<K> {
     public final boolean delete(Object key) {
         if (key == null)
             throw new NullPointerException();
-        Comparator<? super K> cmp = comparator;
-        for (Node<K> b = findPredecessor(key, cmp), n = b.next; ; ) {
+        Comparator<? super V> cmp = comparator;
+        for (Node<V> b = findPredecessor(key, cmp), n = b.next; ; ) {
             int c;
             if (n == null)
                 break;
-            Node<K> f = n.next;
+            Node<V> f = n.next;
             if (n.deleted) {        // n is deleted
                 b.updateNext(f);
                 n = f;
@@ -366,12 +366,12 @@ public class SkipList<K> {
      * reduction.
      */
     private void tryReduceLevel() {
-        HeadIndex<K> h = head;
-        HeadIndex<K> d;
-        HeadIndex<K> e;
+        HeadIndex<V> h = head;
+        HeadIndex<V> d;
+        HeadIndex<V> e;
         if (h.level > 3 &&
-            (d = (HeadIndex<K>)h.down) != null &&
-            (e = (HeadIndex<K>)d.down) != null &&
+            (d = (HeadIndex<V>)h.down) != null &&
+            (e = (HeadIndex<V>)d.down) != null &&
             e.right == null &&
             d.right == null &&
             h.right == null)
@@ -383,7 +383,7 @@ public class SkipList<K> {
         initialize();
     }
 
-    public SkipList(Comparator<? super K> comparator) {
+    public SkipList(Comparator<? super V> comparator) {
         this.comparator = comparator;
         initialize();
     }

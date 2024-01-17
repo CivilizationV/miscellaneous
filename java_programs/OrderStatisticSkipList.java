@@ -3,26 +3,26 @@ package com.spicdt.party.admin.biz.publish.service;
 import java.util.Comparator;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class OrderStatisticSkipList<K> {
+public class OrderStatisticSkipList<V> {
 
     /**
      * The topmost head index of the skiplist.
      */
-    private transient volatile HeadIndex<K> head;
+    private transient volatile HeadIndex<V> head;
 
     /**
      * The size of the List (the number of elements it contains).
      */
     private int size;
 
-    final Comparator<? super K> comparator;
+    final Comparator<? super V> comparator;
 
     private void initialize() {
-        head = new HeadIndex<K>(new Node<K>(null, null),
-                                  null, null, 1);
+        head = new HeadIndex<V>(new Node<V>(null, null),
+                null, null, 1);
     }
 
-    private boolean updateHead(HeadIndex<K> val) {
+    private boolean updateHead(HeadIndex<V> val) {
         this.head = val;
         return true;
     }
@@ -30,20 +30,20 @@ public class OrderStatisticSkipList<K> {
     /* ---------------- Nodes -------------- */
 
     /**
-     * Nodes hold keys , and are singly linked in sorted
+     * Nodes hold values , and are singly linked in sorted
      * order. The list is
      * headed by a dummy node accessible as head.node.
      */
-    static final class Node<K> {
-        final K key;
+    static final class Node<V> {
+        final V value;
         volatile boolean deleted;
-        volatile Node<K> next;
+        volatile Node<V> next;
 
         /**
          * Creates a new regular node.
          */
-        Node(K key, Node<K> next) {
-            this.key = key;
+        Node(V value, Node<V> next) {
+            this.value = value;
             this.next = next;
         }
 
@@ -51,7 +51,7 @@ public class OrderStatisticSkipList<K> {
             this.deleted = true;
         }
 
-        void updateNext(Node<K> val) {
+        void updateNext(Node<V> val) {
             this.next = val;
         }
 
@@ -67,16 +67,16 @@ public class OrderStatisticSkipList<K> {
      * ways, that can't nicely be captured by placing field in a
      * shared abstract class.
      */
-    static class Index<K> {
-        final Node<K> node;
-        final Index<K> down;
-        volatile Index<K> right;
-        private int interval;
+    static class Index<V> {
+        final Node<V> node;
+        final Index<V> down;
+        volatile Index<V> right;
+        private int distance;
 
         /**
          * Creates index node with given values.
          */
-        Index(Node<K> node, Index<K> down, Index<K> right) {
+        Index(Node<V> node, Index<V> down, Index<V> right) {
             this.node = node;
             this.down = down;
             this.right = right;
@@ -85,39 +85,41 @@ public class OrderStatisticSkipList<K> {
         /**
          * Set right field
          */
-        final void updateRight(Index<K> val) {
+        final void updateRight(Index<V> val) {
             this.right = val;
         }
 
         /**
          * Set newSucc as successor.
-         * @param succ the expected current successor
+         *
+         * @param succ    the expected current successor
          * @param newSucc the new successor
          */
-        final void link(Index<K> succ, Index<K> newSucc) {
+        final void link(Index<V> succ, Index<V> newSucc) {
             newSucc.right = succ;
             updateRight(newSucc);
             int i = 0;
-            Node<K> node = this.node;
+            Node<V> node = this.node;
             while (node != newSucc.node) {
                 node = node.next;
                 i++;
             }
-            newSucc.interval = i;
+            newSucc.distance = i;
             if (succ != null) {
-                succ.interval = succ.interval - i + 1;
+                succ.distance = succ.distance - i;
             }
         }
 
         /**
-         * Tries to set right field to skip over apparent successor
+         * Set right field to skip over apparent successor
          * succ.
+         *
          * @param succ the current successor
          */
-        final void unlink(Index<K> succ) {
+        final void unlink(Index<V> succ) {
             updateRight(succ.right);
             if (succ.right != null) {
-                succ.right.interval = succ.right.interval - 1;
+                succ.right.distance = succ.right.distance + succ.distance;
             }
         }
 
@@ -128,9 +130,10 @@ public class OrderStatisticSkipList<K> {
     /**
      * Nodes heading each level keep track of their level.
      */
-    static final class HeadIndex<K> extends Index<K> {
+    static final class HeadIndex<V> extends Index<V> {
         final int level;
-        HeadIndex(Node<K> node, Index<K> down, Index<K> right, int level) {
+
+        HeadIndex(Node<V> node, Index<V> down, Index<V> right, int level) {
             super(node, down, right);
             this.level = level;
         }
@@ -144,32 +147,26 @@ public class OrderStatisticSkipList<K> {
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     static final int cpr(Comparator c, Object x, Object y) {
-        return (c != null) ? c.compare(x, y) : ((Comparable)x).compareTo(y);
+        return (c != null) ? c.compare(x, y) : ((Comparable) x).compareTo(y);
     }
 
     /* ---------------- Traversal -------------- */
 
     /**
-     * Returns a base-level node with key strictly less than given key,
-     * or the base-level header if there is no such node.  Also
-     * unlinks indexes to deleted nodes found along the way.  Callers
-     * rely on this side effect of clearing indices to deleted nodes.
-     * @param key the key
-     * @return a predecessor of key
+     * Returns a base-level node with value strictly less than given value,
+     * or the base-level header if there is no such node.
+     *
+     * @param value the value
+     * @return a predecessor of value
      */
-    private Node<K> findPredecessor(Object key, Comparator<? super K> cmp) {
-        if (key == null)
+    private Node<V> findPredecessor(Object value, Comparator<? super V> cmp) {
+        if (value == null)
             throw new NullPointerException(); // don't postpone errors
-        for (Index<K> q = head, r = q.right, d; ; ) {
+        for (Index<V> q = head, r = q.right, d; ; ) {
             if (r != null) {
-                Node<K> n = r.node;
-                K k = n.key;
-                if (n.deleted) {
-                    q.unlink(r);
-                    r = q.right;         // reread r
-                    continue;
-                }
-                if (cpr(cmp, key, k) > 0) {
+                Node<V> n = r.node;
+                V k = n.value;
+                if (cpr(cmp, value, k) > 0) {
                     q = r;
                     r = r.right;
                     continue;
@@ -183,78 +180,24 @@ public class OrderStatisticSkipList<K> {
     }
 
     /**
-     * Returns node holding key or null if no such, clearing out any
-     * deleted nodes seen along the way.  Repeatedly traverses at
-     * base-level looking for key starting at predecessor returned
-     * from findPredecessor, processing base-level deletions as
-     * encountered. Some callers rely on this side effect of clearing
-     * deleted nodes.
-     *
-     * Restarts occur, at traversal step centered on node n, if:
-     *
-     *       n's value field is null, indicating n is deleted, in
-     *       which case we help out an ongoing structural deletion
-     *       before retrying.  Even though there are cases where such
-     *       unlinking doesn't require restart, they aren't sorted out
-     *       here because doing so would not usually outweigh cost of
-     *       restarting.
-     *
-     * The traversal loops in doPut, doRemove all
-     * include the same three kinds of checks. They can't easily share code because each uses the
-     * reads of fields held in locals occurring in the orders they
-     * were performed.
-     *
-     * @param key the key
-     * @return node holding key, or null if no such
-     */
-
-    private Node<K> findNode(Object key) {
-        if (key == null)
-            throw new NullPointerException(); // don't postpone errors
-        Comparator<? super K> cmp = comparator;
-        for (Node<K> b = findPredecessor(key, cmp), n = b.next; ; ) {
-            int c;
-            if (n == null)
-                break;
-            Node<K> f = n.next;
-            if (n.deleted) {    // n is deleted
-                b.updateNext(f);
-                n = f;
-                continue;
-            }
-            if ((c = cpr(cmp, key, n.key)) == 0)
-                return n;
-            if (c < 0)
-                break;
-            b = n;
-            n = f;
-        }
-        return null;
-    }
-
-    /**
      * Determining the rank of an element
-     * @param key
+     *
+     * @param value
      * @return
      */
-    public int rank(Object key) {
-        if (key == null)
+    public int rank(Object value) {
+        if (value == null)
             throw new NullPointerException(); // don't postpone errors
-        Comparator<? super K> cmp = comparator;
+        Comparator<? super V> cmp = comparator;
 
-        Node<K> b;
+        Node<V> b;
         int rank = 0;
-        for (Index<K> q = head, r = q.right, d; ; ) {
+        for (Index<V> q = head, r = q.right, d; ; ) {
             if (r != null) {
-                Node<K> n = r.node;
-                K k = n.key;
-                if (n.deleted) {
-                    q.unlink(r);
-                    r = q.right;         // reread r
-                    continue;
-                }
-                if (cpr(cmp, key, k) > 0) {
-                    rank = rank + r.interval;
+                Node<V> n = r.node;
+                V k = n.value;
+                if (cpr(cmp, value, k) > 0) {
+                    rank = rank + r.distance;
                     q = r;
                     r = r.right;
                     continue;
@@ -267,17 +210,12 @@ public class OrderStatisticSkipList<K> {
             q = d;
             r = d.right;
         }
-        for (Node<K> n = b.next; ; ) {
+        for (Node<V> n = b.next; ; ) {
             int c;
             if (n == null)
                 break;
-            Node<K> f = n.next;
-            if (n.deleted) {    // n is deleted
-                b.updateNext(f);
-                n = f;
-                continue;
-            }
-            if ((c = cpr(cmp, key, n.key)) == 0)
+            Node<V> f = n.next;
+            if ((c = cpr(cmp, value, n.value)) == 0)
                 return ++rank;
             if (c < 0)
                 break;
@@ -290,23 +228,19 @@ public class OrderStatisticSkipList<K> {
 
     /**
      * Retrieving the element with a given rank
+     *
      * @param rank
-     * @return
+     * @return the element with the given rank, or null if the rank is out of upper bound
      */
-    public K select(int rank) {
+    public V select(int rank) {
         if (rank <= 0)
             throw new IllegalArgumentException(); // don't postpone errors
         int i = rank;
-        for (Index<K> q = head, r = q.right, d; ; ) {
+        for (Index<V> q = head, r = q.right, d; ; ) {
             if (r != null) {
-                Node<K> n = r.node;
-                K k = n.key;
-                if (n.deleted) {
-                    q.unlink(r);
-                    r = q.right;         // reread r
-                    continue;
-                }
-                int interval = r.interval;
+                Node<V> n = r.node;
+                V k = n.value;
+                int interval = r.distance;
                 if (interval < i) {
                     i = i - interval;
                     q = r;
@@ -317,73 +251,119 @@ public class OrderStatisticSkipList<K> {
                 }
             }
             if ((d = q.down) == null) {
-                Node<K> node = q.node;
-                while (i > 0) {
+                Node<V> node = q.node;
+                while (i > 0 && node != null) {
                     i--;
-                    if (node != null) {
-                        node = node.next;
-                    } else {
-                        return null;
-                    }
+                    node = node.next;
                 }
-                return node.key;
+                return node == null ? null : node.value;
             }
             q = d;
             r = d.right;
         }
     }
 
+    public V selectRecursive(int rank) {
+        if (rank <= 0)
+            throw new IllegalArgumentException(); // don't postpone errors
+        return select(head, rank);
+    }
+
+    private V select(Index<V> index, int rank) {
+        Index<V> right = index.right;
+        if (right != null) {
+            int domain = right.distance;
+            if (domain == rank) {
+                return right.node.value;
+            } else if (domain < rank) {
+                return select(right, rank - domain);
+            }
+        }
+        Index<V> down = index.down;
+        if (down != null) {
+            return select(down, rank);
+        } else {
+            Node<V> node = index.node;
+            int i = rank;
+            while (node != null && i > 0) {
+                node = node.next;
+                i--;
+            }
+            return node == null ? null : node.value;
+        }
+    }
+
     /**
      * Main insertion method.  Adds element if not present.
-     * @param key the key
+     * @param value the value
      */
-    public void insert(K key) {
-        Node<K> z;             // added node
-        if (key == null)
+    public void insert(V value) {
+        Node<V> z;             // added node
+        if (value == null)
             throw new NullPointerException();
-        Comparator<? super K> cmp = comparator;
-        for (Node<K> b = findPredecessor(key, cmp), n = b.next; ; ) {
-            if (n != null) {
-                Node<K> f = n.next;
-                if (n.deleted) {   // n is deleted
-                    b.updateNext(f);
-                    n = f;
+        Comparator<? super V> cmp = comparator;
+        Node<V> b;
+        int rank = 0;
+        for (Index<V> q = head, r = q.right, d; ; ) {
+            if (r != null) {
+                Node<V> n = r.node;
+                V k = n.value;
+                if (cpr(cmp, value, k) > 0) {
+                    rank = rank + r.distance;
+                    q = r;
+                    r = r.right;
                     continue;
+                } else {
+                    r.distance++;
                 }
-                if (cpr(cmp, key, n.key) > 0) {
+            }
+            if ((d = q.down) == null) {
+                b = q.node;
+                break;
+            }
+            q = d;
+            r = d.right;
+        }
+        for (Node<V> n = b.next; ; ) {
+            if (n != null) {
+                Node<V> f = n.next;
+                if (cpr(cmp, value, n.value) > 0) {
                     b = n;
                     n = f;
+                    rank++;
                     continue;
                 }
                 // else c <= 0; fall through
             }
 
-            z = new Node<>(key, n);
+            z = new Node<>(value, n);
             b.updateNext(z);
             size++;
+            rank++;
             break;
         }
 
         int rnd = ThreadLocalRandom.current().nextInt();
-//        if ((rnd & 0x80000001) == 0) { // test highest and lowest bits
-        if ((rnd & 0x00000001) == 0) { // test highest and lowest bits
+        if ((rnd & 0x80000001) == 0) { // test highest and lowest bits
             int level = 1, max;
             while (((rnd >>>= 1) & 1) != 0)
                 ++level;
-            Index<K> idx = null;
-            HeadIndex<K> h = head;
+            Index<V> idx = null;
+            HeadIndex<V> h = head;
             if (level <= (max = h.level)) {
-                for (int i = 1; i <= level; ++i)
+                for (int i = 1; i <= level; ++i) {
                     idx = new Index<>(z, idx, null);
+                }
             } else { // try to grow by one level
                 level = max + 1; // hold in array and later pick the one to use
-                @SuppressWarnings("unchecked") Index<K>[] idxs =
-                        (Index<K>[]) new Index<?>[level + 1];
+                @SuppressWarnings("unchecked") Index<V>[] idxs =
+                        (Index<V>[]) new Index<?>[level + 1];
                 for (int i = 1; i <= level; ++i)
                     idxs[i] = idx = new Index<>(z, idx, null);
+                idxs[level].distance = rank;
                 int oldLevel = h.level;
-                Node<K> oldbase = h.node;
-                HeadIndex<K> newh = new HeadIndex<>(oldbase, h, idxs[level], level); // top level
+                Node<V> oldbase = h.node;
+                HeadIndex<V> newh = new HeadIndex<>(oldbase, h, idxs[level], level); // top level
                 updateHead(newh);
                 h = newh;
                 idx = idxs[level = oldLevel];
@@ -391,18 +371,12 @@ public class OrderStatisticSkipList<K> {
             // find insertion points and splice in
             int insertionLevel = level;
             int j = h.level;
-            for (Index<K> q = h, r = q.right, t = idx; ; ) {
+            for (Index<V> q = h, r = q.right, t = idx; ; ) {
                 if (t == null)
                     break;
                 if (r != null) {
-                    Node<K> n = r.node;
-                    // compare before deletion check avoids needing recheck
-                    int c = cpr(cmp, key, n.key);
-                    if (n.deleted) {
-                        q.unlink(r);
-                        r = q.right;
-                        continue;
-                    }
+                    Node<V> n = r.node;
+                    int c = cpr(cmp, value, n.value);
                     if (c > 0) {
                         q = r;
                         r = r.right;
@@ -428,8 +402,8 @@ public class OrderStatisticSkipList<K> {
      * Main deletion method. Locates node, unlinks predecessor, removes associated index
      * nodes, and possibly reduces head index level.
      *
-     * Index nodes are cleared out simply by calling findPredecessor.
-     * which unlinks indexes to deleted nodes found along path to key,
+     * Index nodes are cleared out.
+     * which unlinks indexes to deleted nodes found along path to value,
      * which will include the indexes to this node.  This is done
      * unconditionally. We can't check beforehand whether there are
      * index nodes because it might be the case that some or all
@@ -437,24 +411,19 @@ public class OrderStatisticSkipList<K> {
      * search for it, and we'd like to ensure lack of garbage
      * retention, so must call to be sure.
      *
-     * @param key the key
+     * @param value the value
      * @return true, or false if not found
      */
-    public final boolean delete(Object key) {
-        if (key == null)
+    public final boolean delete(Object value) {
+        if (value == null)
             throw new NullPointerException();
-        Comparator<? super K> cmp = comparator;
-        for (Node<K> b = findPredecessor(key, cmp), n = b.next; ; ) {
+        Comparator<? super V> cmp = comparator;
+        for (Node<V> b = findPredecessor(value, cmp), n = b.next; ; ) {
             int c;
             if (n == null)
                 break;
-            Node<K> f = n.next;
-            if (n.deleted) {        // n is deleted
-                b.updateNext(f);
-                n = f;
-                continue;
-            }
-            if ((c = cpr(cmp, key, n.key)) < 0)
+            Node<V> f = n.next;
+            if ((c = cpr(cmp, value, n.value)) < 0)
                 break;
             if (c > 0) {
                 b = n;
@@ -464,7 +433,28 @@ public class OrderStatisticSkipList<K> {
             n.setDeleted();
             b.updateNext(f);
             --size;
-            findPredecessor(key, cmp);      // clean index
+            for (Index<V> q = head, r = q.right, d; ; ) {
+                if (r != null) {
+                    Node<V> m = r.node;
+                    V k = m.value;
+                    if (m.deleted) {
+                        q.unlink(r);
+                        r = q.right;         // reread r
+                        continue;
+                    }
+                    if (cpr(cmp, value, k) > 0) {
+                        q = r;
+                        r = r.right;
+                        continue;
+                    } else {
+                        r.distance--;
+                    }
+                }
+                if ((d = q.down) == null)
+                    break;
+                q = d;
+                r = d.right;
+            }
             if (head.right == null)
                 tryReduceLevel();
             return true;
@@ -487,12 +477,12 @@ public class OrderStatisticSkipList<K> {
      * reduction.
      */
     private void tryReduceLevel() {
-        HeadIndex<K> h = head;
-        HeadIndex<K> d;
-        HeadIndex<K> e;
+        HeadIndex<V> h = head;
+        HeadIndex<V> d;
+        HeadIndex<V> e;
         if (h.level > 3 &&
-            (d = (HeadIndex<K>)h.down) != null &&
-            (e = (HeadIndex<K>)d.down) != null &&
+            (d = (HeadIndex<V>)h.down) != null &&
+            (e = (HeadIndex<V>)d.down) != null &&
             e.right == null &&
             d.right == null &&
             h.right == null)
@@ -513,9 +503,8 @@ public class OrderStatisticSkipList<K> {
         initialize();
     }
 
-    public OrderStatisticSkipList(Comparator<? super K> comparator) {
+    public OrderStatisticSkipList(Comparator<? super V> comparator) {
         this.comparator = comparator;
         initialize();
     }
-
 }

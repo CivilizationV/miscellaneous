@@ -40,6 +40,7 @@
 | date  | Database System Concepts(1284) | Kafka(280) | awk(186) | ZooKeeper(214) | Linux(418) | Computer Architecture(617) | JavaScript(665) |
 | ----  | :----------------------:       | :---:      | :------: | :------------: | :--------: | :------------------------: | :-------------: |
 | 01-04 | 449                            | 181        | 93       | 77             | 72         | 1                          | 65              |
+| 01-17 | 472                            | 181        | 93       | 77             | 72         | 1                          | 65              |
 
 # 2023年 11月
 | date  | Database System Concepts(1284) | Kafka(280) | awk(186) | ZooKeeper(214) | Linux(418) | Computer Architecture(617) | JavaScript(665) |
