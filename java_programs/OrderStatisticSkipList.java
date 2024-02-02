@@ -344,7 +344,8 @@ public class OrderStatisticSkipList<V> {
         }
 
         int rnd = ThreadLocalRandom.current().nextInt();
-        if ((rnd & 0x80000001) == 0) { // test highest and lowest bits
+//        if ((rnd & 0x80000001) == 0) { // test highest and lowest bits
+        if ((rnd & 0x00000001) == 0) { // test highest and lowest bits
             int level = 1, max;
             while (((rnd >>>= 1) & 1) != 0)
                 ++level;
@@ -356,8 +357,7 @@ public class OrderStatisticSkipList<V> {
                 }
             } else { // try to grow by one level
                 level = max + 1; // hold in array and later pick the one to use
-                @SuppressWarnings("unchecked") Index<V>[] idxs =
-                        (Index<V>[]) new Index<?>[level + 1];
+                @SuppressWarnings("unchecked") Index<V>[] idxs = (Index<V>[]) new Index<?>[level + 1];
                 for (int i = 1; i <= level; ++i)
                     idxs[i] = idx = new Index<>(z, idx, null);
                 idxs[level].distance = rank;

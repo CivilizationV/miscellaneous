@@ -17,28 +17,26 @@ public class SkipList<V> {
                                   null, null, 1);
     }
 
-    private boolean updateHead(HeadIndex<V> val) {
+    private void updateHead(HeadIndex<V> val) {
         this.head = val;
-        return true;
     }
 
     /* ---------------- Nodes -------------- */
 
     /**
      * Nodes hold keys , and are singly linked in sorted
-     * order. The list is
-     * headed by a dummy node accessible as head.node.
+     * order. The list is headed by a dummy node accessible as head.node.
      */
     static final class Node<V> {
-        final V key;
+        final V value;
         volatile boolean deleted;
         volatile Node<V> next;
 
         /**
          * Creates a new regular node.
          */
-        Node(V key, Node<V> next) {
-            this.key = key;
+        Node(V value, Node<V> next) {
+            this.value = value;
             this.next = next;
         }
 
@@ -144,7 +142,7 @@ public class SkipList<V> {
         for (Index<V> q = head, r = q.right, d; ; ) {
             if (r != null) {
                 Node<V> n = r.node;
-                V k = n.key;
+                V k = n.value;
                 if (n.deleted) {
                     q.unlink(r);
                     r = q.right;         // reread r
@@ -198,12 +196,7 @@ public class SkipList<V> {
             if (n == null)
                 break;
             Node<V> f = n.next;
-            if (n.deleted) {    // n is deleted
-                b.updateNext(f);
-                n = f;
-                continue;
-            }
-            if ((c = cpr(cmp, key, n.key)) == 0)
+            if ((c = cpr(cmp, key, n.value)) == 0)
                 return n;
             if (c < 0)
                 break;
@@ -226,12 +219,7 @@ public class SkipList<V> {
         for (Node<V> b = findPredecessor(key, cmp), n = b.next; ; ) {
             if (n != null) {
                 Node<V> f = n.next;
-                if (n.deleted) {   // n is deleted
-                    b.updateNext(f);
-                    n = f;
-                    continue;
-                }
-                if (cpr(cmp, key, n.key) > 0) {
+                if (cpr(cmp, key, n.value) > 0) {
                     b = n;
                     n = f;
                     continue;
@@ -277,12 +265,7 @@ public class SkipList<V> {
                 if (r != null) {
                     Node<V> n = r.node;
                     // compare before deletion check avoids needing recheck
-                    int c = cpr(cmp, key, n.key);
-                    if (n.deleted) {
-                        q.unlink(r);
-                        r = q.right;
-                        continue;
-                    }
+                    int c = cpr(cmp, key, n.value);
                     if (c > 0) {
                         q = r;
                         r = r.right;
@@ -329,12 +312,7 @@ public class SkipList<V> {
             if (n == null)
                 break;
             Node<V> f = n.next;
-            if (n.deleted) {        // n is deleted
-                b.updateNext(f);
-                n = f;
-                continue;
-            }
-            if ((c = cpr(cmp, key, n.key)) < 0)
+            if ((c = cpr(cmp, key, n.value)) < 0)
                 break;
             if (c > 0) {
                 b = n;
