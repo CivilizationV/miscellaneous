@@ -285,14 +285,16 @@ public class RangeQuerySkipList<K> {
                 }
                 // start <= k <= end
                 RangeQueryResult leftResult;
-                if (cpr(cmp, start, k) == 0) {
+                if (q.node != null && q.node.key != null && cpr(cmp, start, q.node.key) == 0) {
+                    leftResult = new RangeQueryResult(r.spanCount, r.spanSum, r.spanMin, r.spanMax);
+                } else if (cpr(cmp, start, k) == 0) {
                     leftResult = new RangeQueryResult(1, n.value, n.value, n.value);
                 } else if ((d = q.down) == null) {
                     leftResult = baseRangeQuery(q.node, start, k);
                 } else {
                     leftResult = rangeQuery(d, start, k);
                 }
-                RangeQueryResult result = new RangeQueryResult(0, 0, Double.MAX_VALUE, Double.MIN_VALUE);
+                RangeQueryResult result = new RangeQueryResult(0, 0, Double.MAX_VALUE, -Double.MAX_VALUE);
                 for (Index<K> s = r.right; ; ) {
                     if (s != null && cpr(cmp, s.node.key, end) <= 0) {
                         result.count = result.count + s.spanCount;
@@ -307,7 +309,7 @@ public class RangeQuerySkipList<K> {
                 }
                 RangeQueryResult rightResult;
                 if (cpr(cmp, r.node.key, end) == 0) {
-                    rightResult = new RangeQueryResult(0, 0, Double.MAX_VALUE, Double.MIN_VALUE);
+                    rightResult = new RangeQueryResult(0, 0, Double.MAX_VALUE, -Double.MAX_VALUE);
                 } else if ((d = r.down) == null) {
                     rightResult = baseRangeQuery(r.node, r.node.key, end);
                 } else {
@@ -323,7 +325,7 @@ public class RangeQuerySkipList<K> {
     }
 
     private RangeQueryResult baseRangeQuery(Node<K> b, K start, K end) {
-        RangeQueryResult result = new RangeQueryResult(0, 0, Double.MAX_VALUE, Double.MIN_VALUE);
+        RangeQueryResult result = new RangeQueryResult(0, 0, Double.MAX_VALUE, -Double.MAX_VALUE);
         Comparator<? super K> cmp = comparator;
         for (Node<K> m = b.next; ; ) {
             if (m == null || cpr(cmp, end, m.key) < 0)
@@ -386,7 +388,7 @@ public class RangeQuerySkipList<K> {
         int rank = 0;
         double sum = 0;
         double min = Double.MAX_VALUE;
-        double max = Double.MIN_VALUE;
+        double max = -Double.MAX_VALUE;
         for (Index<K> q = head, r = q.right, d; ; ) {
             if (r != null) {
                 Node<K> n = r.node;
@@ -673,50 +675,93 @@ public class RangeQuerySkipList<K> {
         public void setMax(double max) {
             this.max = max;
         }
+
+        @Override
+        public String toString() {
+            return "RangeQueryResult{" +
+                    "count=" + count +
+                    ", sum=" + sum +
+                    ", min=" + min +
+                    ", max=" + max +
+                    '}';
+        }
     }
 
     public static void main(String[] args) {
         RangeQuerySkipList<Integer> list = new RangeQuerySkipList<>();
-        list.insert(60, 60.0);
-        list.insert(20, 20.0);
-        list.insert(10, 10.0);
-        list.insert(40, 40.0);
-        list.insert(30, 30.0);
-        list.insert(50, 50.0);
-        list.insert(70, 70.0);
-        list.insert(80, 80.0);
-        RangeQueryResult res1 = list.rangeQueryRecursive(0, 100);
+        list.insert(60, 6.0);
+        list.insert(20, 2.0);
+        list.insert(10, 1.0);
+        list.insert(40, 4.0);
+        list.insert(30, 3.0);
+        list.insert(50, 5.0);
+        list.insert(70, 7.0);
+        list.insert(80, 8.0);
+        list.insert(100, 10.0);
+        list.insert(90, 9.0);
+        list.insert(120, 12.0);
+        list.insert(110, 11.0);
+        list.insert(150, 15.0);
+        list.insert(140, 14.0);
+        list.insert(130, 13.0);
+        RangeQueryResult res1 = list.rangeQueryRecursive(0, 200);
         RangeQueryResult res2 = list.rangeQueryRecursive(0, 35);
         RangeQueryResult res3 = list.rangeQueryRecursive(0, 30);
         RangeQueryResult res4 = list.rangeQueryRecursive(35, 100);
-        RangeQueryResult res5 = list.rangeQueryRecursive(30, 100);
+        RangeQueryResult res5 = list.rangeQueryRecursive(40, 100);
         RangeQueryResult res6 = list.rangeQueryRecursive(15, 35);
         RangeQueryResult res7 = list.rangeQueryRecursive(20, 50);
-        RangeQueryResult res8 = list.rangeQueryRecursive(10, 30);
         RangeQueryResult res9 = list.rangeQueryRecursive(10, 60);
         RangeQueryResult res10 = list.rangeQueryRecursive(30, 60);
         RangeQueryResult res11 = list.rangeQueryRecursive(30, 30);
         RangeQueryResult res12 = list.rangeQueryRecursive(0, 0);
         RangeQueryResult res14 = list.rangeQueryRecursive(10, 10);
-        RangeQueryResult res13 = list.rangeQueryRecursive(100, 100);
-        list.delete(80);
+        RangeQueryResult res13 = list.rangeQueryRecursive(200, 200);
         list.delete(10);
-        list.delete(30);
-        list.insert(100, 100.0);
-        list.insert(90, 90.0);
+        list.delete(100);
+        list.delete(150);
+        list.insert(-10, -10.0);
+        list.insert(0, 0.0);
+        list.insert(99, 10.0);
+        list.insert(150, 15.0);
         RangeQueryResult res21 = list.rangeQueryRecursive(0, 100);
         RangeQueryResult res22 = list.rangeQueryRecursive(0, 35);
         RangeQueryResult res23 = list.rangeQueryRecursive(0, 30);
         RangeQueryResult res24 = list.rangeQueryRecursive(35, 100);
-        RangeQueryResult res25 = list.rangeQueryRecursive(30, 100);
+        RangeQueryResult res25 = list.rangeQueryRecursive(40, 100);
         RangeQueryResult res26 = list.rangeQueryRecursive(15, 35);
-        RangeQueryResult res27 = list.rangeQueryRecursive(20, 50);
+        RangeQueryResult res27 = list.rangeQueryRecursive(-10, 30);
         RangeQueryResult res28 = list.rangeQueryRecursive(10, 30);
-        RangeQueryResult res29 = list.rangeQueryRecursive(10, 60);
-        RangeQueryResult res30 = list.rangeQueryRecursive(30, 60);
+        RangeQueryResult res29 = list.rangeQueryRecursive(30, 250);
+        RangeQueryResult res30 = list.rangeQueryRecursive(30, 150);
         RangeQueryResult res31 = list.rangeQueryRecursive(30, 30);
         RangeQueryResult res32 = list.rangeQueryRecursive(0, 0);
-        RangeQueryResult res34 = list.rangeQueryRecursive(10, 10);
-        RangeQueryResult res33 = list.rangeQueryRecursive(100, 100);
+        RangeQueryResult res34 = list.rangeQueryRecursive(200, 200);
+        System.out.println("res1:" + res1);
+        System.out.println("res2: " + res2);
+        System.out.println("res3: " + res3);
+        System.out.println("res4: " + res4);
+        System.out.println("res5: " + res5);
+        System.out.println("res6: " + res6);
+        System.out.println("res7:" + res7);
+        System.out.println("res9:" + res9);
+        System.out.println("res10:" + res10);
+        System.out.println("res11:" + res11);
+        System.out.println("res12:" + res12);
+        System.out.println("res13:" + res13);
+        System.out.println("res14:" + res14);
+        System.out.println("res21:" + res21);
+        System.out.println("res22:" + res22);
+        System.out.println("res23:" + res23);
+        System.out.println("res24:" + res24);
+        System.out.println("res25:" + res25);
+        System.out.println("res26:" + res26);
+        System.out.println("res27:" + res27);
+        System.out.println("res28:" + res28);
+        System.out.println("res29:" + res29);
+        System.out.println("res30:" + res30);
+        System.out.println("res31:" + res31);
+        System.out.println("res32:" + res32);
+        System.out.println("res34:" + res34);
     }
 }
