@@ -1,7 +1,6 @@
 package com.spicdt.party.admin.biz.publish.service;
 
-import java.util.Comparator;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class RangeQuerySkipList<K> {
@@ -284,37 +283,16 @@ public class RangeQuerySkipList<K> {
                     return rangeQuery(d, start, end);
                 }
                 // start <= k <= end
-                RangeQueryResult leftResult;
-                if (q.node != null && q.node.key != null && cpr(cmp, start, q.node.key) == 0) {
-                    leftResult = new RangeQueryResult(r.spanCount, r.spanSum, r.spanMin, r.spanMax);
-                } else if (cpr(cmp, start, k) == 0) {
-                    leftResult = new RangeQueryResult(1, n.value, n.value, n.value);
-                } else if ((d = q.down) == null) {
-                    leftResult = baseRangeQuery(q.node, start, k);
-                } else {
-                    leftResult = rangeQuery(d, start, k);
-                }
+                RangeQueryResult leftResult = processLeft(q, start);
                 RangeQueryResult result = new RangeQueryResult(0, 0, Double.MAX_VALUE, -Double.MAX_VALUE);
-                for (Index<K> s = r.right; ; ) {
-                    if (s != null && cpr(cmp, s.node.key, end) <= 0) {
-                        result.count = result.count + s.spanCount;
-                        result.sum = result.sum + s.spanSum;
-                        result.min = Math.min(result.min, s.spanMin);
-                        result.max = Math.max(result.max, s.spanMax);
-                    } else {
-                        break;
-                    }
-                    r = s;
-                    s = s.right;
+                while (r.right != null && cpr(cmp, r.right.node.key, end) <= 0) {
+                    result.count = result.count + r.right.spanCount;
+                    result.sum = result.sum + r.right.spanSum;
+                    result.min = Math.min(result.min, r.right.spanMin);
+                    result.max = Math.max(result.max, r.right.spanMax);
+                    r = r.right;
                 }
-                RangeQueryResult rightResult;
-                if (cpr(cmp, r.node.key, end) == 0) {
-                    rightResult = new RangeQueryResult(0, 0, Double.MAX_VALUE, -Double.MAX_VALUE);
-                } else if ((d = r.down) == null) {
-                    rightResult = baseRangeQuery(r.node, r.node.key, end);
-                } else {
-                    rightResult = rangeQuery(d, r.node.key, end);
-                }
+                RangeQueryResult rightResult = processRight(r, end);
                 result.count = result.count + leftResult.count + rightResult.count;
                 result.sum = result.sum + leftResult.sum + rightResult.sum;
                 result.min = Math.min(Math.min(result.min, leftResult.min), rightResult.min);
@@ -324,8 +302,57 @@ public class RangeQuerySkipList<K> {
         }
     }
 
+    private RangeQueryResult processLeft(Index<K> q, K start) {
+        Index<K> d, r = q.right;
+        Node<K> n = r.node;
+        K k = n.key;
+        RangeQueryResult leftResult;
+        if (q.node != null && q.node.key != null && cpr(comparator, start, q.node.key) == 0) {
+            leftResult = new RangeQueryResult(r.spanCount, r.spanSum, r.spanMin, r.spanMax);
+        } else if (cpr(comparator, start, k) == 0) {
+            leftResult = new RangeQueryResult(1, n.value, n.value, n.value);
+        } else if ((d = q.down) == null) {
+            leftResult = baseRangeQuery(q.node, start, k);
+        } else {
+            leftResult = rangeQuery(d, start, k);
+        }
+        return leftResult;
+    }
+
+    private RangeQueryResult processRight(Index<K> r, K end) {
+        RangeQueryResult rightResult;
+        Index<K> d;
+        if (cpr(comparator, r.node.key, end) == 0) {
+            rightResult = new RangeQueryResult(0, 0, Double.MAX_VALUE, -Double.MAX_VALUE);
+        } else if ((d = r.down) == null) {
+            rightResult = baseRangeQuery(r.node, r.node.key, end);
+        } else {
+            rightResult = rangeQuery(d, r.node.key, end);
+        }
+        return rightResult;
+    }
+
+//    private RangeQueryResult processMiddle(Index<K> r, K end) {
+//        RangeQueryResult middleResult = new RangeQueryResult(0, 0, Double.MAX_VALUE, -Double.MAX_VALUE);
+//        for (Index<K> s = r.right; ; ) {
+//            if (s != null && cpr(comparator, s.node.key, end) <= 0) {
+//                middleResult.count = middleResult.count + s.spanCount;
+//                middleResult.sum = middleResult.sum + s.spanSum;
+//                middleResult.min = Math.min(middleResult.min, s.spanMin);
+//                middleResult.max = Math.max(middleResult.max, s.spanMax);
+//                r = s;
+//                s = s.right;
+//            } else {
+//                break;
+//            }
+//        }
+//        return middleResult;
+//    }
     private RangeQueryResult baseRangeQuery(Node<K> b, K start, K end) {
         RangeQueryResult result = new RangeQueryResult(0, 0, Double.MAX_VALUE, -Double.MAX_VALUE);
+        if (b == null) {
+            return result;
+        }
         Comparator<? super K> cmp = comparator;
         for (Node<K> m = b.next; ; ) {
             if (m == null || cpr(cmp, end, m.key) < 0)
@@ -445,6 +472,7 @@ public class RangeQuerySkipList<K> {
         }
 
         int rnd = ThreadLocalRandom.current().nextInt();
+        rnd = getRandom();
 //        if ((rnd & 0x80000001) == 0) { // test highest and lowest bits
         if ((rnd & 0x00000001) == 0) { // test lowest bits
             int level = 1, maxLevel;
@@ -687,24 +715,34 @@ public class RangeQuerySkipList<K> {
         }
     }
 
+    private static List<Integer> randomList = new ArrayList<>(Arrays.asList(66, 66, 88, 0, 43, 15, 72, 65, 65, 84, 96,
+            10, 31, 70, 82, 2, 61, 15, 50, 52, 65, 4, 66, 99, 37, 59, 53, 75, 60, 33, 21, 96, 74, 56, 20, 96, 75, 94,
+            15, 97, 80, 26, 26, 29, 67, 60, 47, 71, 98, 63, 79, 8, 72, 59, 90, 63, 28, 83, 2, 14, 19, 44, 5, 85, 66, 49,
+            44, 38, 15, 69, 42, 82, 20, 50, 85, 27, 20, 2, 11, 16, 67, 64, 46, 71, 90, 84, 41, 70, 26, 47, 39, 67, 96,
+            25, 66, 17, 94, 99, 72, 71));
+    private static int randomIndex = 0;
+    public static int getRandom() {
+        return randomList.get(randomIndex++);
+    }
     public static void main(String[] args) {
         RangeQuerySkipList<Integer> list = new RangeQuerySkipList<>();
-        list.insert(60, 6.0);
-        list.insert(20, 2.0);
-        list.insert(10, 1.0);
-        list.insert(40, 4.0);
-        list.insert(30, 3.0);
-        list.insert(50, 5.0);
-        list.insert(70, 7.0);
-        list.insert(80, 8.0);
-        list.insert(100, 10.0);
-        list.insert(90, 9.0);
-        list.insert(120, 12.0);
-        list.insert(110, 11.0);
-        list.insert(150, 15.0);
-        list.insert(140, 14.0);
-        list.insert(130, 13.0);
-        RangeQueryResult res1 = list.rangeQueryRecursive(0, 200);
+        list.insert(60, 12.0);
+        list.insert(20, 6.0);
+        list.insert(10, 15.0);
+        list.insert(40, 6.0);
+        list.insert(30, 15.0);
+        list.insert(50, 11.0);
+        list.insert(70, 19.0);
+        list.insert(80, 1.0);
+        list.insert(100, 5.0);
+        list.insert(90, 16.0);
+        list.insert(120, 11.0);
+        list.insert(110, 6.0);
+        list.insert(150, 12.0);
+        list.insert(140, 17.0);
+        list.insert(130, 0.0);
+//        list.insert(45, 8.0);
+        RangeQueryResult res1 = list.rangeQueryRecursive(25, 125);
         RangeQueryResult res2 = list.rangeQueryRecursive(0, 35);
         RangeQueryResult res3 = list.rangeQueryRecursive(0, 30);
         RangeQueryResult res4 = list.rangeQueryRecursive(35, 100);
